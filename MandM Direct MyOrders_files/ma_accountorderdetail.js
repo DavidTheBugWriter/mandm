@@ -1,0 +1,1 @@
+$(function(){checkoutUtilities.attachOrderStatusEvents($("#rightMandMContainer"));checkoutModals.attachTrackingPopups()})
