@@ -44,3 +44,29 @@ btn =
     styled button
         [ margin (px 12)
         , color (rgb 250 250 250)
+
+main : Program () Model Msg
+main =
+    Browser.sandbox
+        { view = view >> toUnstyled
+        , update = update
+        , init = initialModel
+        }
+
+
+update : Msg -> Model -> Model
+update msg model =
+    model
+
+
+type Msg
+    = DoSomething
+
+
+type alias Model =
+    ()
+
+
+initialModel : Model
+initialModel =
+    ()
