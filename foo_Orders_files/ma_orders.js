@@ -1,0 +1,1 @@
+$(function(){checkoutUtilities.attachOrderStatusEvents($("#ordersList"));checkoutModals.attachTrackingPopups()})

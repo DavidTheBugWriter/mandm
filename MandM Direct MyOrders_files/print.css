@@ -1,7 +1,0 @@
-﻿#myAccountMiniLogin2, #myAccountHeaderImage, #topBanner, #AccountMenu, #AccountContent #rhs h1
-{
-    display: none;
-}
-
-#billingAddress, #deliveryAddress {width:45%;}
-.myOrdersTable, .orderDetailsTable, .orderHistoriesTable, #AccountContent { width: 99%;}

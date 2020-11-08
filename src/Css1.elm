@@ -1,5 +1,5 @@
-module Main exposing (main)
-
+module Css1 exposing (main)
+{- Don't forget to use Css1 in html for init -}
 import Browser
 import Css exposing (..)
 import Html
@@ -44,6 +44,33 @@ btn =
     styled button
         [ margin (px 12)
         , color (rgb 250 250 250)
+        , hover
+            [ backgroundColor theme.primary
+            , textDecoration underline
+            ]
+        ]
+
+view : Model -> Html Msg
+view model =
+    nav []
+        [ 
+          p [][text "Experiments with HTML and css"]
+        {- img [ src "foo/david.jpg", css [ width (pct 100) ] ] [] -}
+        , btn [ onClick DoSomething ] [ text "Click me!" ]
+        , h1 [] [ text "Lists in Elm" ]
+        , h2 [] [ text "My Grocery List" ]
+        , ul []
+        [ li [] [ text "Black Beans" ]
+        , li [] [ text "Limes" ]
+        , li [] [ text "Greek Yogurt" ]
+        , li [] [ text "Cilantro" ]
+        , li [] [ text "Honey" ]
+        , li [] [ text "Sweet Potatoes" ]
+        , li [] [ text "Cumin" ]
+        , li [] [ text "Chili Powder" ]
+        , li [] [ text "Quinoa" ]
+        ]
+        ]
 
 main : Program () Model Msg
 main =

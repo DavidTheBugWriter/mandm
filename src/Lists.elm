@@ -2,6 +2,7 @@ module Lists exposing (..)
 import Html exposing (..)
 
 
+main : Html msg
 main =
   div []
     [ h1 [] [ text "Lists in Elm" ]
