@@ -32,6 +32,20 @@ Basket items are in list with list items described by:
 * goes to My Account -> My Orders -> Vew Order
 * Generate a formatted email and send it
 
+## impementation notes
+
+(Not sure what Elm brings to the css party?)
+
+Somewhere in target html file add:
+>\<script src="davidselm.js">\</script>
+
+and
+> \<script>
+    var app = Elm.Css1.init({ node: document.querySelector('davestag') })
+  \</script>
+
+  'davestag' is the target node for your Elm magic
+
 ## examples
 
 lists:

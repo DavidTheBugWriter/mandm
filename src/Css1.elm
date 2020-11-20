@@ -2,8 +2,9 @@ module Css1 exposing (main)
 {- Don't forget to use Css1 in html for init -}
 import Browser
 import Css exposing (..)
-import Html
 import Html.Styled exposing (..)
+import Html
+
 import Html.Styled.Attributes exposing (css, href, src)
 import Html.Styled.Events exposing (onClick)
 
@@ -50,19 +51,39 @@ btn =
             ]
         ]
 
+{- https://www.w3schools.com/Css/tryit.asp?filename=trycss_dropdown_text
+errBox : List (Attribute msg) -> List (Html msg) -> List (Html msg) ->  Html msg
+errBox = 
+    text
+        [ color (rgb 100 100 1000)
+
+            stuph
+        ]
+
+
+
+
+-}
+
+
 view : Model -> Html Msg
 view model =
     nav []
-        [ 
-          p [][text "Experiments with HTML and css"]
+        [
+        p [css [textShadow2 (px 1) (px 1)]][text "Experiments with HTML and css"]
         {- img [ src "foo/david.jpg", css [ width (pct 100) ] ] [] -}
         , btn [ onClick DoSomething ] [ text "Click me!" ]
         , h1 [] [ text "Lists in Elm" ]
         , h2 [] [ text "My Grocery List" ]
         , ul []
-        [ li [] [ text "Black Beans" ]
-        , li [] [ text "Limes" ]
-        , li [] [ text "Greek Yogurt" ]
+        [ li 
+            [css [border3 (px 1) solid (rgb 20 120 12)]] 
+            [ text "Black Beans" , text "waga"]
+        , li 
+            [css [hover [ backgroundColor (hex("FF0000")), textDecoration underline ]]] 
+            [ text "Limes" ]
+        , li [css [ display none]] {- hide it -}
+            [ text "Greek Yogurt" ]
         , li [] [ text "Cilantro" ]
         , li [] [ text "Honey" ]
         , li [] [ text "Sweet Potatoes" ]
