@@ -10,6 +10,7 @@ import Element.Background
 import Html exposing (Html, div, text)
 import Html.Attributes
 import Html.Events exposing (onClick)
+import Html exposing (Attribute)
 
 
 
@@ -38,13 +39,6 @@ type Msg
     = Enter
     | Leave
 
-
-type MenuDropState
-    = Dropped
-    | UnDropped
-
-
-
 update : Msg -> Model -> Model
 update msg model =
     case msg of
@@ -59,7 +53,7 @@ update msg model =
 view : Model -> Html Msg
 view model =
          div [] [ 
-             mouseDropText "Some Text" "Drop Text" model
+             mouseDropText "Some Text" "Drop Text-2" model
              , text "next line"
              ]
 
@@ -68,10 +62,9 @@ insurelloBlue : Element.Color
 insurelloBlue =
     rgb255 59 139 186
 
-
-{-dropFontAttr :  Font
-dropFontAttr = 
-    size 18 -}
+dropList : List String
+dropList = 
+    ["One","Two"]
 
 
 {- need an arity/1 version -}

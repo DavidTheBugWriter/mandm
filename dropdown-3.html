@@ -1,0 +1,30 @@
+<html>
+<head>
+  <style>
+    /* you can style your program here */
+    /* 
+    if hideButton then
+      Html.node "style" [] [ Html.text ".buttonToHide {display:none}" ]
+    else
+      Html.text ""
+      */
+      .d1 {
+        display: block;
+        background-color: #c51a1a;
+      }
+      /* .d1 {
+        display: none;
+        background-color: #ebe0e0;
+      } */
+
+  </style>
+</head>
+<body>
+  <main class="d11">Not supposed to be seen </main>
+  <script src="dropdowncheck1.js"></script>
+  <script>
+    var app = Elm.Dropcheckbox1.init({ node: document.querySelector('main') })
+    // you can use ports and stuff here
+  </script>
+</body>
+</html>
