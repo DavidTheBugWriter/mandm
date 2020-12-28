@@ -1,0 +1,17 @@
+{
+    "orders": [
+      {
+        "id": 1172029,
+        "cust": 1022936,
+        "items": ["trousers", "ties","Face mask"],
+        "shipping": 4.99,
+        "total": 1.20
+      },
+      {"id": 1227070,
+      "cust": 1292929,
+      "items": ["Jacket", "Skechers"],
+      "shipping": 6.99,
+      "total": 11.20
+    }  
+]    
+}
