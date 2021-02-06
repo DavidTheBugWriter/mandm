@@ -45,10 +45,17 @@ type alias Order =
     {
     id : Int
     , cust : Int
-    , items : List String
+    , items : List Item
     , shipping : Float
     , total : Float}
-    
+
+type alias Item =
+    {
+    item : Int
+    , description : String
+    , cost : Float
+    , quantity : Int}
+
 orderDecoder =
     D.map5 
     Order
@@ -58,8 +65,21 @@ orderDecoder =
     (D.at ["shipping"] D.float)
     (D.at ["total"] D.float)
 
+orderDecoder2 : Decode.Decoder Order
+orderDecoder2 =
+    Decode.succeed Order
+    |> required "id" int
+    |> requiredAt ["orders","items"] itemDecoder --nested Json object decoder
+
 o1 = Order 1701388 90828272 ["one","two"] 34 231.46
 
+itemDecoder =
+    D.map4
+    Item
+    (D.at ["item"] D.int)
+    (D.at ["description"] D.string)
+    (D.at ["cost"] D.float)
+    (D.at ["quantity"] D.int)
 -- orderDecoder =D.map (\name -> { name = name })  (D.at ["name"] D.string)
 makeOrderRow orderItems =
     List.map (\n -> (tr [][(text n)])) orderItems
