@@ -56,12 +56,9 @@ type Msg
     | Leave
     | Update Model
 
-
 type MenuDropState
     = Dropped
     | UnDropped
-
-
 
 update : Msg -> Model -> Model
 update msg model =
@@ -74,36 +71,29 @@ update msg model =
             { model | mouseEntered = False } -- ?
         Update  checkboxvalue ->
             { model | checkBox = checkboxvalue.checkBox } 
-          
-
 
 view : Model -> Html Msg
 view model =
-
-      {-   div [] [ 
-             mouseDropText "Some Text" "Drop Text" model
-             , text "next line"
-             ] -}
-              
    Element.layout
         [Font.size 12
         , Element.spacing 50
         , Element.Font.wordSpacing 0
         , padding 8]
-          
+
           --<| mouseDropText "Stuff" "Drop Text" model
-          
+
         <| Element.row[]
         [ 
-         Element.text "15 May 2020"  
-         , Input.checkbox [padding 8, Font.color errCbRed]
+         Element.text "15th May 2020"  
+        {- , Input.checkbox [padding 8, Font.color errCbRed]
                 { checked = model.checkBox
                 , onChange = \new -> Update { model | checkBox = new }
                 , icon = Input.defaultCheckbox
                 , label = Input.labelRight [] (Element.text "Order problems")
                 }
-
-         ,  Element.text "Dispatched"  
+        -}
+         ,
+         Element.text " Dispatched"  
 
          --, mouseDropText "Stuff" "Drop Text" mode
          , Element.link[padding 8, Element.spacing 50, Font.size 12, Font.color insurelloBlue]{
@@ -129,7 +119,6 @@ errCbRed =
 {-dropFontAttr :  Font
 dropFontAttr = 
     size 18 -}
-
 
 {- need an arity/1 version -}
 mouseDropText :  String -> String -> Model -> Element.Element Msg
@@ -162,9 +151,6 @@ mouseDropText thetext droptext model =
         ]
         (Element.text thetext)
         --|> Element.layout []
-
-
-
 
 main : Program () Model Msg
 main =
