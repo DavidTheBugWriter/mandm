@@ -1,4 +1,4 @@
-module Post exposing (main, Order, orderDecoder, ordersDecoder)
+module Issues exposing (main, Order, orderDecoder, ordersDecoder)
 
 -- https://github.com/pawanpoudel/beginning-elm-code/blob/master/chapter-7/7.4-creating-post-module/beginning-elm/post-app/Post.elm
 
@@ -10,6 +10,13 @@ module Post exposing (main, Order, orderDecoder, ordersDecoder)
 import Html exposing (Html, button, div, text, h3, table, thead, tr, th, td)
 -- import Html.Attributes exposing (style)
 import Browser
+import Element exposing (Element, rgb255, rgb, padding,el, row, column, fill, none)
+import Element.Border
+import Element.Events
+import Element
+import Element.Font exposing (..)
+import Element.Font as Font
+import Element.Background
 import Html.Events exposing (onClick)
 import Http exposing (expectJson)
 import Json.Decode as Decode exposing (Decoder, int, float, list, string)
@@ -22,7 +29,7 @@ type Msg
     = FetchOrders
     | OrdersReceived (WebData (List Order))
 
-type alias Model = { orders : WebData (List Order)}
+type alias Model = { orders : WebData (List Order), pageurl : String}
 type alias Item =
     { sku : String
     , description : String
@@ -68,17 +75,21 @@ itemDecoder =
 
 view : Model -> Html Msg
 view model =
-    viewOutput model
+    Element.layout[Font.size 12]
+    <| Element.column[]
+    [                       
+        row[]([viewOutput model])
+    ]
 
 
-viewOutput : Model -> Html Msg
+viewOutput : Model -> Element Msg
 viewOutput model =
     case model.orders of
         RemoteData.NotAsked ->
-            text ""
+            Element.text ""
 
         RemoteData.Loading ->
-            h3 [] [ text "Loading..." ]
+            Element.text "Loading..."
 
         RemoteData.Success orders ->
             viewOrders orders
@@ -86,18 +97,40 @@ viewOutput model =
         RemoteData.Failure httpError ->
             viewError (errorMessage httpError)
 
-viewOrders : List Order -> Html Msg
+viewOrders : List Order -> Element Msg
 viewOrders orders =
-    let 
-        printorder = List.map(\c -> viewOrder c) orders
-    in
-    div []
-        [ h3 [] [ text "Orders" ]
-        , table []
-        (
-        printorder
-        )
-        ]
+    Element.table []
+        {
+        data = orders --orders
+        , columns =
+            [
+                { header = el [  ] <| Element.text "Customer ID"
+                , width = fill
+                , view =  
+                    \order -> 
+                        Element.text (String.fromInt order.customerid)
+                }
+                , { header = el [  ] <| Element.text "Order ID"
+                    , width = fill
+                    , view =  
+                        \order -> 
+                            Element.text (String.fromInt order.orderid )
+                }                
+                , { header = el [  ] <| Element.text "Shipping"
+                    , width = fill
+                    , view =  
+                        \order -> 
+                            Element.text (String.fromFloat order.shipping )
+                }
+                , { header = el [  ] <| Element.text "Total"
+                    , width = fill
+                    , view =  
+                        \order -> 
+                            Element.text (String.fromFloat order.total )
+                }
+            ]
+    
+        }
 
 viewOrder : Order -> Html Msg
 viewOrder o =
@@ -131,16 +164,14 @@ viewItems li =
    tr[]
    (List.map (\x -> viewItem x) li)
 
-viewError : String -> Html Msg
+viewError : String -> Element Msg
 viewError message =
     let
         errorHeading =
             "Couldn't fetch data at this time."
     in
-    div []
-        [ h3 [] [ text errorHeading ]
-        , text ("Error: " ++ message)
-        ]
+         Element.text ("Error: " ++ errorHeading++" ; "++ message)
+        
 
 errorMessage : Http.Error -> String
 errorMessage httpError =
@@ -202,11 +233,11 @@ update msg model =
         OrdersReceived response ->
             ( { model | orders = response }, Cmd.none )
 
-init : () -> ( Model, Cmd Msg )
-init _ =
-    ( { orders = RemoteData.Loading }, fetchOrders )
+init : String -> ( Model, Cmd Msg )
+init flagurl =
+    ( { orders = RemoteData.Loading, pageurl = flagurl }, fetchOrders )
 
-main : Program () Model Msg
+main : Program String Model Msg
 main =
     Browser.element
         { init = init
