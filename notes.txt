@@ -1,0 +1,18 @@
+See the README.md file for how to start the system
+
+the mandmSPA folder has the files for a single page app system but at the top level
+we are using discrete Html pages and routing to per page elm code. Not sure if 
+that's dumb or not.
+
+
+useful URLs:
+
+-- https://github.com/pawanpoudel/beginning-elm-code/blob/master/chapter-7/7.4-creating-post-module/beginning-elm/post-app/Post.elm
+
+-- Json Decoders:
+-- https://www.jackfranklin.co.uk/blog/json-decoding-in-elm/
+-- https://www.brianthicks.com/post/2016/10/17/composing-decoders-like-lego/
+-- https://www.artificialworlds.net/blog/2018/10/19/elm-json-decoder-examples/
+
+-- Flags:
+-- https://riptutorial.com/elm/example/13036/program-with-flags

@@ -1,16 +1,9 @@
 module Issues exposing (main, Order, orderDecoder, ordersDecoder)
 
--- https://github.com/pawanpoudel/beginning-elm-code/blob/master/chapter-7/7.4-creating-post-module/beginning-elm/post-app/Post.elm
-
--- Json Decoders:
--- https://www.jackfranklin.co.uk/blog/json-decoding-in-elm/
--- https://www.brianthicks.com/post/2016/10/17/composing-decoders-like-lego/
--- https://www.artificialworlds.net/blog/2018/10/19/elm-json-decoder-examples/
-
 import Html exposing (Html, button, div, text, h3, table, thead, tr, th, td)
 -- import Html.Attributes exposing (style)
 import Browser
-import Element exposing (Element, rgb255, rgb, padding,el, row, column, fill, none)
+import Element exposing (Element, rgb255, rgb, spacing, padding,el, row, column, fill, none)
 import Element.Border
 import Element.Events
 import Element
@@ -22,6 +15,11 @@ import Http exposing (expectJson)
 import Json.Decode as Decode exposing (Decoder, int, float, list, string)
 import Json.Decode.Pipeline exposing (required)
 import RemoteData exposing (RemoteData, WebData)
+import Element
+import Element
+import Css exposing (space)
+import Element.Background as Background
+import Element.Border as Border
 -- import Html exposing (thead)
 -- import Svg.Styled.Attributes exposing (order)
 
@@ -29,7 +27,8 @@ type Msg
     = FetchOrders
     | OrdersReceived (WebData (List Order))
 
-type alias Model = { orders : WebData (List Order), pageurl : String}
+type alias Model = { orders : WebData (List Order), pageurl : String, order : Int}
+
 type alias Item =
     { sku : String
     , description : String
@@ -47,7 +46,25 @@ type alias Order =
     , total : Float
     }
 
-{- Decoder for a list of type Post -}
+type alias Flags =
+    { flagorder: Int,
+     flagurl: String
+    }
+
+-- functions for styling 
+itemfmt = [ spacing 10, padding 10]
+
+itemcolfmt = [ Font.color (rgb255 0 0 255), spacing 10, padding 10]
+
+colheadertext : String -> Element msg
+colheadertext msg =
+    Element.el (itemfmt ++ [Font.color (rgb255 255 0 0)])(Element.text msg)
+
+tableitemtext : (a  -> String ) -> a -> Element msg
+tableitemtext formatterf msg =
+    Element.el itemfmt (Element.text (formatterf msg))
+
+{- Decoder for a list of type Order -}
 ordersDecoder : Decoder (List Order)
 ordersDecoder =
     let y = orderDecoder
@@ -62,6 +79,10 @@ orderDecoder =
     |> required "items" (list itemDecoder)
     |> required "shipping" float
     |> required "total" float
+
+extract : Int -> (List Order) -> List Order
+extract wanted orders = 
+    List.filter (\x -> x.orderid == wanted) orders
 
 itemDecoder : Decoder Item
 itemDecoder = 
@@ -78,12 +99,13 @@ view model =
     Element.layout[Font.size 12]
     <| Element.column[]
     [                       
-        row[]([viewOutput model])
+        row[]([viewOutput model  model.order])        
+        -- row[]([viewOutput model])
     ]
 
 
-viewOutput : Model -> Element Msg
-viewOutput model =
+viewOutput : Model -> Int -> Element Msg
+viewOutput model order =
     case model.orders of
         RemoteData.NotAsked ->
             Element.text ""
@@ -92,45 +114,91 @@ viewOutput model =
             Element.text "Loading..."
 
         RemoteData.Success orders ->
-            viewOrders orders
+            viewOrders (extract order orders)
 
         RemoteData.Failure httpError ->
             viewError (errorMessage httpError)
 
 viewOrders : List Order -> Element Msg
 viewOrders orders =
-    Element.table []
+    let 
+        items = List.head orders
+        itemlist = case items of
+            Just l -> l.items
+            _ -> []
+    in
+    Element.column[]
+    [
+        Element.table [] --ORDER TABLE
         {
         data = orders --orders
         , columns =
             [
-                { header = el [  ] <| Element.text "Customer ID"
+                { -- header = el [ spacing 10, padding 10 ] <| Element.text "Customer ID"
+                header = colheadertext "Customer ID"
                 , width = fill
                 , view =  
                     \order -> 
-                        Element.text (String.fromInt order.customerid)
+                        el itemfmt <| Element.text (String.fromInt order.customerid)
                 }
-                , { header = el [  ] <| Element.text "Order ID"
+                , { header = colheadertext "Order ID"
                     , width = fill
                     , view =  
                         \order -> 
-                            Element.text (String.fromInt order.orderid )
+                            el itemfmt <|  Element.text (String.fromInt order.orderid )
                 }                
-                , { header = el [  ] <| Element.text "Shipping"
+                , { header = colheadertext "Shipping"
                     , width = fill
                     , view =  
                         \order -> 
-                            Element.text (String.fromFloat order.shipping )
+                            el itemfmt <| Element.text (String.fromFloat order.shipping )
                 }
-                , { header = el [  ] <| Element.text "Total"
+                , { header = colheadertext "Total"
                     , width = fill
                     , view =  
                         \order -> 
-                            Element.text (String.fromFloat order.total )
+                            el itemfmt <| Element.text (String.fromFloat order.total )
                 }
-            ]
-    
+            ]    
         }
+        , Element.table[] -- ITEMS table
+            {
+            data = itemlist
+            , columns =
+                [
+                    { header = el itemcolfmt <| Element.text "Product Code"
+                    , width = fill
+                    , view =  
+                        \item -> 
+                            el itemfmt <| Element.text item.sku
+                    }
+                ,    { header = el itemcolfmt <| Element.text "Description"
+                    , width = fill
+                    , view =  
+                        \item -> 
+                            el itemfmt <| Element.text item.description
+                    }
+                ,   { header = el itemcolfmt <| Element.text "Price"
+                    , width = fill
+                    , view =  
+                        \item -> 
+                            tableitemtext String.fromFloat item.price
+                    }
+                ,   { header = el itemcolfmt <| Element.text "Saving"
+                    , width = fill
+                    , view =  
+                        \item -> 
+                            tableitemtext String.fromFloat item.saving
+                    }
+                ,   { header = el itemcolfmt <| Element.text "Stock"
+                    , width = fill
+                    , view =  
+                        \item -> 
+                            tableitemtext String.fromInt item.stock
+                    }
+                ]
+        }
+    ]
 
 viewOrder : Order -> Html Msg
 viewOrder o =
@@ -233,11 +301,11 @@ update msg model =
         OrdersReceived response ->
             ( { model | orders = response }, Cmd.none )
 
-init : String -> ( Model, Cmd Msg )
-init flagurl =
-    ( { orders = RemoteData.Loading, pageurl = flagurl }, fetchOrders )
+init : Flags -> ( Model, Cmd Msg )
+init flags =
+    ( { orders = RemoteData.Loading, pageurl = flags.flagurl, order = flags.flagorder }, fetchOrders )
 
-main : Program String Model Msg
+main : Program Flags Model Msg
 main =
     Browser.element
         { init = init

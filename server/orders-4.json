@@ -1,0 +1,54 @@
+{
+  "orders": [
+    {
+      "orderid": 1172029,
+      "customerid": 1022936,
+      "items":[
+        {
+          "sku" : "RIT/N 3400",
+          "description":"trousers",
+          "size":"L",
+          "stock":21,
+          "price":12.99,
+          "saving":2.04
+        },
+        {
+          "sku" : "RKJ4/M_900",
+          "description":"Face mask",
+          "size":"L",
+          "stock":3,
+          "price":12.99,
+          "saving":5.03
+        }
+      ],
+      "shipping": 4.99,
+      "total": 21.20
+    } ,
+
+    {
+      "orderid": 2028371,
+      "customerid": 201862,
+      "items":[
+        {
+          "sku" : "VPKE_25",
+          "description":"Skechers Shoes",
+          "size":"12",
+          "stock":5,
+          "price":11.45,
+          "saving":7.32
+        },
+        {
+          "sku" : "DLDK36",
+          "description":"Hunters Wellies",
+          "size":"S",
+          "stock":334,
+          "price":42.39,
+          "saving":13.02
+        }
+      ],
+      "shipping": 6.99,
+      "total": 37.28
+    }
+
+  ]
+}
