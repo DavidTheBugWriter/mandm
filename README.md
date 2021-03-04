@@ -29,3 +29,5 @@ You can now watch the elm file _directly_ & without an html file:
 you might need to install elm json decode for json pipe goodness |>
 
 `elm install NoRedInk/elm-json-decode-pipeline
+
+(note that you will need to install globally or per project as you wish: if you do it per project other projects won't find it despite it being found for this one - which may confuse)

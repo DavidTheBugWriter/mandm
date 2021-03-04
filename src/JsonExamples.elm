@@ -6,7 +6,7 @@ import Browser
 import Html exposing (..)
 import Html.Events exposing (onClick)
 import Http
-import Json.Decode exposing (Decoder, Error(..), decodeString, list, string)
+import Json.Decode exposing (Decoder, Error(..), list, string)
 
 
 type alias Model =

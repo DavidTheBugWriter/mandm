@@ -16,3 +16,144 @@ useful URLs:
 
 -- Flags:
 -- https://riptutorial.com/elm/example/13036/program-with-flags
+
+========
+
+create a Url:
+> import Url exposing (Url)
+> import Dict exposing (Dict)
+> import Url exposing (Url)
+> import Url.Parser.Query as Query
+
+> bs = Url.fromString("http://localhost/blog/43")
+Just { fragment = Nothing, host = "localhost", path = "/blog/43", port_ = Nothing, protocol = Http, query = Nothing }
+
+=====
+
+parse Query:
+>import QS
+
+> d= QS.parse QS.config "?orderID=10101"
+Dict.fromList [("orderID",One (Number 10101))]
+
+> l = QS.parse QS.config "?orderID[]=1&orderID[]=2"
+Dict.fromList [("orderID",Many [Number 1,Number 2])]
+
+=========
+bool result contains:
+> QS.has "orderID" d  --key exists
+True : Bool
+
+> QS.has "orderID" d
+True : Bool
+> getOrderQuery k =
+   d 
+   |> Dict.get k                    
+<function> : String -> Maybe QS.OneOrMany
+
+=========
+> getOrderQuery "orderID"
+Just (One (Number 10101))
+    : Maybe QS.OneOrMany
+> 
+
+> QS.get "orderID" l
+Just (Many [Number 1,Number 2]) --arbitrary
+    : Maybe QS.OneOrMany
+
+=========
+>Tuple.first (1,2) -- or second
+1 : number
+
+> case res of
+|   Just (QS.One x) -> [x]
+|   Just (QS.Many y) -> y
+|   Nothing -> []
+|   
+[Number 10101] : List QS.Primitive
+
+> case res of
+|   Just (QS.One (QS.Number x)) -> [x]
+|   _ -> []
+|   
+[10101] : List Float
+
+> ql = QS.Many [QS.Number 1, QS.Number 2]
+Many [Number 1,Number 2]
+    : QS.OneOrMany
+
+> l
+Dict.fromList [("orderID",Many [Number 1,Number 2])]
+
+> l2 = Dict.get "orderID" l
+Just (Many [Number 1,Number 2])
+
+> case l2 of
+|   Just (QS.Many [QS.Number x, QS.Number y]) -> [x,y]
+|   _ -> []
+[1,2] : List Float
+
+-- Simple pattern matching:
+type Foo = FooI Int
+ List.map (\(FooI x) -> x)  [FooI 3, FooI 4]
+
+--would this work? No 
+foofunc (Just (QS.Many a)) =
+    List.map (\(FooI b) -> b)  a
+
+=====
+$cd ~/projects/mandm/: elm repl
+> import QS
+> import Dict
+> oneparser= QS.parse QS.config "?orderID=10101"
+Dict.fromList [("orderID",One (Number 10101))]
+    : QS.Query
+> manyparser = QS.parse QS.config "?orderID[]=1&orderID[]=2"
+Dict.fromList [("orderID",Many [Number 1,Number 2])]
+    : QS.Query
+> oneis = Dict.get "orderID" oneparser
+Just (One (Number 10101))
+    : Maybe QS.OneOrMany
+> manyis = Dict.get "orderID" manyparser
+Just (Many [Number 1,Number 2])
+    : Maybe QS.OneOrMany
+
+{-}
+<function> : Maybe QS.OneOrMany -> List QS.Primitive
+> foo : Maybe QS.OneOrMany -> List QS.Primitive
+| foo a =
+|     case a of
+|        Just (QS.Many b) ->b
+|        Just (QS.One c) -> [c]
+|        Nothing -> []
+-}
+
+{-
+foo : Maybe QS.OneOrMany -> List QS.Primitive
+ foo a =
+     case a of
+        Just (QS.Many b) ->
+            List.map (\c -> c)  b
+        Just (QS.One c) -> [c]
+        Nothing -> []
+-}
+
+> foo : Maybe QS.OneOrMany -> List QS.Primitive
+foo a =
+   case a of
+     Just (QS.Many b) -> -- b
+        List.map (\(QS.Primitive c) -> c)  b
+     Just (QS.One c) -> [c]
+     Nothing -> []
+
+<function> : Maybe QS.OneOrMany -> List QS.Primitive
+> foo l2
+[Number 1,Number 2] : List QS.Primitive
+> foo res
+[Number 10101] : List QS.Primitive
+
+arrayis = > case manyis of
+|   Just (QS.Many [QS.Number x, QS.Number y]) -> [x,y]
+|   _ -> []
+|   
+[1,2] : List Float

@@ -1,27 +1,21 @@
 module Issues exposing (main, Order, orderDecoder, ordersDecoder)
 
-import Html exposing (Html, button, div, text, h3, table, thead, tr, th, td)
--- import Html.Attributes exposing (style)
+import Html exposing (Html)
 import Browser
-import Element exposing (Element, rgb255, rgb, spacing, padding,el, row, column, fill, none)
-import Element.Border
-import Element.Events
-import Element
-import Element.Font exposing (..)
+import Element exposing (Element, rgb255, spacing, padding,el, row,  fill)
 import Element.Font as Font
-import Element.Background
-import Html.Events exposing (onClick)
 import Http exposing (expectJson)
 import Json.Decode as Decode exposing (Decoder, int, float, list, string)
 import Json.Decode.Pipeline exposing (required)
-import RemoteData exposing (RemoteData, WebData)
-import Element
-import Element
-import Css exposing (space)
-import Element.Background as Background
-import Element.Border as Border
--- import Html exposing (thead)
--- import Svg.Styled.Attributes exposing (order)
+import RemoteData exposing ( WebData)
+import Url exposing (Url)
+import Url.Parser as P exposing (Parser, (</>), (<?>), s, top)
+import Url.Parser.Query as Q
+
+-- route URLs to handlers
+type Route
+    = Home
+    | GetOrder Int
 
 type Msg
     = FetchOrders
@@ -52,8 +46,9 @@ type alias Flags =
     }
 
 -- functions for styling 
+itemfmt : List (Element.Attribute msg)
 itemfmt = [ spacing 10, padding 10]
-
+itemcolfmt : List (Element.Attr () msg)
 itemcolfmt = [ Font.color (rgb255 0 0 255), spacing 10, padding 10]
 
 colheadertext : String -> Element msg
@@ -71,6 +66,7 @@ ordersDecoder =
     in
         --list is a built-in Json.Decoder list decoder , found decoder (List Order)
     list y
+
 orderDecoder : Decoder Order
 orderDecoder = 
     Decode.succeed Order
@@ -102,7 +98,6 @@ view model =
         row[]([viewOutput model  model.order])        
         -- row[]([viewOutput model])
     ]
-
 
 viewOutput : Model -> Int -> Element Msg
 viewOutput model order =
@@ -145,7 +140,7 @@ viewOrders orders =
                     , width = fill
                     , view =  
                         \order -> 
-                            el itemfmt <|  Element.text (String.fromInt order.orderid )
+                            el itemfmt <| Element.text (String.fromInt order.orderid )
                 }                
                 , { header = colheadertext "Shipping"
                     , width = fill
@@ -200,38 +195,6 @@ viewOrders orders =
         }
     ]
 
-viewOrder : Order -> Html Msg
-viewOrder o =
-    table[]
-    [
-        orderHeader
-        ,tr[]
-        [
-        td[][text (String.fromInt o.customerid)]
-        , td[][text (String.fromInt o.orderid)]
-        , td[][text (String.fromFloat o.shipping)]
-        , td[][text (String.fromFloat o.total)]
-        ]
-        , viewTableHeader
-        , viewItems o.items    
-    ]
-
-viewItem : Item -> Html Msg
-viewItem i =
-    tr[]
-    [
-    td[][text i.sku]
-    , td[][text i.description]
-    , td[][text i.size]
-    , td[][text (String.fromFloat i.price)]
-    , td[][text (String.fromFloat i.saving)]
-    ]
-viewItems : List Item -> Html Msg
-viewItems li =
-   --r1
-   tr[]
-   (List.map (\x -> viewItem x) li)
-
 viewError : String -> Element Msg
 viewError message =
     let
@@ -239,7 +202,6 @@ viewError message =
             "Couldn't fetch data at this time."
     in
          Element.text ("Error: " ++ errorHeading++" ; "++ message)
-        
 
 errorMessage : Http.Error -> String
 errorMessage httpError =
@@ -258,30 +220,6 @@ errorMessage httpError =
 
         Http.BadBody message ->
             message
-
-orderHeader : Html Msg
-orderHeader =
-    thead[][
-        td[][text "Customer ID"]
-        , td[][text "Order ID"]
-        , td[][text "Shipping"]
-        , td[][text "Total"]
-    ]
-
-viewTableHeader : Html Msg
-viewTableHeader =
-    th []
-        [ td []
-            [ text "Item description" ]
-        , td []
-            [ text "Size" ]
-        , td []
-            [ text "Quantity" ]
-        , td []
-            [ text "Savings" ]
-        , td []
-            [ text "Price" ]
-        ]
 
 fetchOrders : Cmd Msg
 fetchOrders =
