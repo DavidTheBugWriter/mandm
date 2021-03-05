@@ -199,7 +199,7 @@ viewError : String -> Element Msg
 viewError message =
     let
         errorHeading =
-            "Couldn't fetch data at this time."
+            "Couldn't fetch JSON data at this time."
     in
          Element.text ("Error: " ++ errorHeading++" ; "++ message)
 

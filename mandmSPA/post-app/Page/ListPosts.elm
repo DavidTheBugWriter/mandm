@@ -5,7 +5,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Http
 import Json.Decode as Decode
-import Post exposing (Post, PostId, postsDecoder)
+import Post exposing ( PostId, postsDecoder)
 import RemoteData exposing (WebData)
 
 
@@ -29,7 +29,7 @@ fetchPosts =
     Http.get
         { url = "http://localhost:5019/posts/"
         , expect =
-            postsDecoder
+            Post.postsDecoder
                 |> Http.expectJson (RemoteData.fromResult >> PostsReceived)
         }
 
