@@ -1,0 +1,2460 @@
+Welcome to fish, the friendly interactive shell
+david@davids-MacBook-Pro ~/p/mandm> elm repl                                                         (base) ---- Elm 0.19.1 ----------------------------------------------------------------
+Say :help for help and :exit to exit! More at <https://elm-lang.org/0.19.1/repl>
+--------------------------------------------------------------------------------
+> import Dict exposing (Dict)
+> import QS
+> parser = QS.parse QS.config "?orderID[]=1&orderID[]=2"
+Dict.fromList [("orderID",Many [Number 1,Number 2])]
+    : QS.Query
+> maybelist = QS.get "orderID" l
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `l` variable:
+
+4| maybelist = QS.get "orderID" l
+                                ^
+These names seem close though:
+
+    e
+    pi
+    abs
+    cos
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> maybelist = QS.get "orderID" parser
+Just (Many [Number 1,Number 2])
+    : Maybe QS.OneOrMany
+> type Foo = FooI Int
+> List.map (\(FooI x) -> x)  [FooI 3, FooI 4]
+[3,4] : List Int
+> case maybelist of 
+|   Just (QS.Many [QS.Number x, QS.Number y]) -> [x,y]]
+|   _ -> []
+|   
+-- UNEXPECTED SQUARE BRACKET ---------------------------------------------- REPL
+
+I ran into an unexpected square bracket:
+
+9|     Just (QS.Many [QS.Number x, QS.Number y]) -> [x,y]]
+                                                         ^
+This ] does not match up with an earlier open square bracket. Try deleting it?
+
+> case maybelist of 
+|   Just (QS.Many [QS.Number x, QS.Number y]) -> [x,y]
+|   _ -> []
+|   
+[1,2] : List Float
+> case maybelist of 
+|   Just (QS.Many z) -> List.map (\c -> c) z
+|   _ -> []
+|   
+[Number 1,Number 2] : List QS.Primitive
+> case maybelist of 
+|   Just (QS.Many z) -> List.map (\(QS.Number c) -> c) z
+|   _ -> []
+|   
+-- UNSAFE PATTERN --------------------------------------------------------- REPL
+
+This pattern does not cover all possiblities:
+
+9|     Just (QS.Many z) -> List.map (\(QS.Number c) -> c) z
+                                       ^^^^^^^^^^^
+Other possibilities include:
+
+    Boolean _
+    Str _
+
+I would have to crash if I saw one of those! So rather than pattern matching in
+function arguments, put a `case` in the function body to account for all
+possibilities.
+
+> case maybelist of 
+|   Just (QS.Many z) -> List.map (\(QS.Primitive) -> c) z
+|   
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `QS.Primitive` variant:
+
+9|     Just (QS.Many z) -> List.map (\(QS.Primitive) -> c) z
+                                       ^^^^^^^^^^^^
+The `QS` module does not expose a `Primitive` variant. These names seem close
+though:
+
+    QS.Many
+    QS.Number
+    QS.One
+    QS.Str
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> case maybelist of 
+|   Just (QS.Many z) -> List.map (\(Number) -> c) z
+|   _ -> []
+|   
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `Number` variant:
+
+9|     Just (QS.Many z) -> List.map (\(Number) -> c) z
+                                       ^^^^^^
+These names seem close though:
+
+    QS.Number
+    QS.Str
+    EQ
+    Err
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> case maybelist of 
+|   Just (QS.Many z) -> List.map (\(QS.Number) -> c) z
+|   _ -> []
+|   
+-- TOO FEW ARGS ----------------------------------------------------------- REPL
+
+The `Number` variant needs 1 argument, but I see 0 instead:
+
+9|     Just (QS.Many z) -> List.map (\(QS.Number) -> c) z
+                                       ^^^^^^^^^
+What is missing? Are some parentheses misplaced?
+
+> case maybelist of 
+|   Just (QS.Many z) -> List.map (\(QS.Number c) -> c) z
+|   _ -> []
+|   
+-- UNSAFE PATTERN --------------------------------------------------------- REPL
+
+This pattern does not cover all possiblities:
+
+9|     Just (QS.Many z) -> List.map (\(QS.Number c) -> c) z
+                                       ^^^^^^^^^^^
+Other possibilities include:
+
+    Boolean _
+    Str _
+
+I would have to crash if I saw one of those! So rather than pattern matching in
+function arguments, put a `case` in the function body to account for all
+possibilities.
+
+> foo maybelist
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `foo` variable:
+
+8|   foo maybelist
+     ^^^
+These names seem close though:
+
+    cos
+    floor
+    not
+    xor
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+>  foo a =
+|        case a of
+|           Just (QS.Many b) ->
+|               List.map (\c -> c)  b
+|           Just (QS.One c) -> [c]
+|           Nothing -> []
+|   
+-- UNEXPECTED EQUALS ------------------------------------------------------ REPL
+
+I was not expecting to see this equals sign:
+
+8|    foo a =
+            ^
+Maybe you want == instead? To check if two values are equal?
+
+Note: I may be getting confused by your indentation. I think I am still parsing
+the `repl_input_value_` definition. Is this supposed to be part of a definition
+after that? If so, the problem may be a bit before the equals sign. I need all
+definitions to be indented exactly the same amount, so the problem may be that
+this new definition has too many spaces in front of it.
+
+> foo a =
+|        case a of
+|           Just (QS.Many b) ->
+|               List.map (\c -> c)  b
+|           Just (QS.One c) -> [c]
+|           Nothing -> []
+|   
+<function> : Maybe QS.OneOrMany -> List QS.Primitive
+> foo maybelist
+[Number 1,Number 2] : List QS.Primitive
+> ol
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `ol` variable:
+
+15|   ol
+      ^^
+These names seem close though:
+
+    cos
+    e
+    foo
+    not
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> maybelist
+Just (Many [Number 1,Number 2])
+    : Maybe QS.OneOrMany
+> 
+> 
+> 
+> foo a =
+|        case Just (Many a) of
+|           List b -> b
+|           Nothing -> []
+|   
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `Many` variant:
+
+6|        case Just (Many a) of
+                     ^^^^
+These names seem close though:
+
+    QS.Many
+    EQ
+    Err
+    False
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `List` variant:
+
+7|           List b -> b
+             ^^^^
+These names seem close though:
+
+    Just
+    LT
+    GT
+    QS.Str
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> foo a =
+|        case Just a of
+|   
+foo        parser     Dict       :exit      :quit
+maybelist  Foo        QS         :help      :reset
+|          Many l -> l
+|          One  one -> one
+|          Nothing -> []
+|   
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `Many` variant:
+
+7|          Many l -> l
+            ^^^^
+These names seem close though:
+
+    QS.Many
+    EQ
+    Err
+    False
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `One` variant:
+
+8|          One  one -> one
+            ^^^
+These names seem close though:
+
+    Ok
+    QS.One
+    EQ
+    Err
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> foo a =
+|        case Just a of
+|          QS.Many l -> l
+|          QS.One  one -> [one]
+|          Nothing -> []
+|   
+-- TYPE MISMATCH ---------------------------------------------------------- REPL
+
+The 1st pattern in this `case` causing a mismatch:
+
+6|        case Just a of
+7|>         QS.Many l -> l
+8|          QS.One  one -> [one]
+9|          Nothing -> []
+
+The first pattern is trying to match `Many` values of type:
+
+    QS.OneOrMany
+
+But the orderIDparser between `case` and `of` is:
+
+    Maybe a
+
+These can never match! Is the pattern the problem? Or is it the orderIDparser?
+
+> foo a =
+|        case (Just QS.OneOrMany a) of
+|          QS.Many l -> l
+|          QS.One  one -> [one]
+|          Nothing -> []
+|   
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `QS.OneOrMany` variant:
+
+6|        case (Just QS.OneOrMany a) of
+                     ^^^^^^^^^^^^
+The `QS` module does not expose a `OneOrMany` variant. These names seem close
+though:
+
+    QS.Many
+    QS.Boolean
+    QS.One
+    QS.Number
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> foo a =
+|        case (QS.OneOrMany a) of
+|          QS.Many l -> l
+|          QS.One  one -> [one]
+|          Nothing -> []
+|   
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `QS.OneOrMany` variant:
+
+6|        case (QS.OneOrMany a) of
+                ^^^^^^^^^^^^
+The `QS` module does not expose a `OneOrMany` variant. These names seem close
+though:
+
+    QS.Many
+    QS.Boolean
+    QS.One
+    QS.Number
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> foo a =
+|           Just (QS.Many (List QS.Number b)) ->b
+|           Just (QS.Many (List QS.Boolean b)) ->b
+|           Just (QS.Many (List QS.Str b)) ->b
+|           Just (QS.One  one) -> [one]
+|           Nothing -> []
+|   
+-- UNEXPECTED ARROW ------------------------------------------------------- REPL
+
+I was partway through parsing an orderIDparser when I got stuck on this arrow:
+
+6|           Just (QS.Many (List QS.Number b)) ->b
+                                               ^^
+Arrows should only appear in `case` expressions and anonymous functions.
+Maybe it was supposed to be a > sign instead?
+
+Note: The syntax for anonymous functions is (\x -> x + 1) so the arguments all
+appear after the backslash and before the arrow. Maybe a backslash is missing
+earlier?
+
+> foo a =
+|   case a of
+|           Just (QS.Many (List QS.Number b)) ->b
+|           Just (QS.Many (List QS.Boolean b)) ->b
+|           Just (QS.Many (List QS.Str b)) ->b
+|           Just (QS.One  one) -> [one]
+|           Nothing -> []
+|   
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `List` variant:
+
+7|           Just (QS.Many (List QS.Number b)) ->b
+                            ^^^^
+These names seem close though:
+
+    Just
+    LT
+    GT
+    QS.Str
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `List` variant:
+
+8|           Just (QS.Many (List QS.Boolean b)) ->b
+                            ^^^^
+These names seem close though:
+
+    Just
+    LT
+    GT
+    QS.Str
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `List` variant:
+
+9|           Just (QS.Many (List QS.Str b)) ->b
+                            ^^^^
+These names seem close though:
+
+    Just
+    LT
+    GT
+    QS.Str
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> foo a =
+|   case a of
+|           Just (QS.Many (Map.List QS.Number b)) ->b
+|           Just (QS.Many (Map.List QS.Boolean b)) ->b
+|           Just (QS.Many (Map.List QS.Str b)) ->b
+|           Just (QS.One  one) -> [one]
+|           Nothing -> []
+|   
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `Map.List` variant:
+
+7|           Just (QS.Many (Map.List QS.Number b)) ->b
+                            ^^^^^^^^
+I cannot find a `Map` import. These names seem close though:
+
+    Maybe.Just
+    False
+    QS.Str
+    Just
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `Map.List` variant:
+
+8|           Just (QS.Many (Map.List QS.Boolean b)) ->b
+                            ^^^^^^^^
+I cannot find a `Map` import. These names seem close though:
+
+    Maybe.Just
+    False
+    QS.Str
+    Just
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `Map.List` variant:
+
+9|           Just (QS.Many (Map.List QS.Str b)) ->b
+                            ^^^^^^^^
+I cannot find a `Map` import. These names seem close though:
+
+    Maybe.Just
+    False
+    QS.Str
+    Just
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> import List
+> foo a =
+|   case a of
+|           Just (QS.Many (Map.List QS.Number b)) ->b
+|           Just (QS.Many (Map.List QS.Boolean b)) ->b
+|           Just (QS.Many (Map.List QS.Str b)) ->b
+|           Just (QS.One  one) -> [one]
+|           Nothing -> []
+|   
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `Map.List` variant:
+
+8|           Just (QS.Many (Map.List QS.Number b)) ->b
+                            ^^^^^^^^
+I cannot find a `Map` import. These names seem close though:
+
+    Maybe.Just
+    False
+    QS.Str
+    Just
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `Map.List` variant:
+
+9|           Just (QS.Many (Map.List QS.Boolean b)) ->b
+                            ^^^^^^^^
+I cannot find a `Map` import. These names seem close though:
+
+    Maybe.Just
+    False
+    QS.Str
+    Just
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `Map.List` variant:
+
+10|           Just (QS.Many (Map.List QS.Str b)) ->b
+                             ^^^^^^^^
+I cannot find a `Map` import. These names seem close though:
+
+    Maybe.Just
+    False
+    QS.Str
+    Just
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> foo a =
+|   case a of
+|           Just (QS.Many (List.Map QS.Number b)) ->b
+|           Just (QS.Many (List.Map QS.Boolean b)) ->b
+|           Just (QS.Many (List.Map QS.Str b)) ->b
+|           Just (QS.One  one) -> [one]
+|           Nothing -> []
+|   
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `List.Map` variant:
+
+8|           Just (QS.Many (List.Map QS.Number b)) ->b
+                            ^^^^^^^^
+The `List` module does not expose a `Map` variant. These names seem close
+though:
+
+    QS.Many
+    QS.One
+    QS.Str
+    Just
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `List.Map` variant:
+
+9|           Just (QS.Many (List.Map QS.Boolean b)) ->b
+                            ^^^^^^^^
+The `List` module does not expose a `Map` variant. These names seem close
+though:
+
+    QS.Many
+    QS.One
+    QS.Str
+    Just
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `List.Map` variant:
+
+10|           Just (QS.Many (List.Map QS.Str b)) ->b
+                             ^^^^^^^^
+The `List` module does not expose a `Map` variant. These names seem close
+though:
+
+    QS.Many
+    QS.One
+    QS.Str
+    Just
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> foo a =
+|   case a of
+|           Just (QS.Many (List.map QS.Number b)) ->b
+|           Just (QS.Many (List.map QS.Boolean b)) ->b
+|           Just (QS.Many (List.map QS.Str b)) ->b
+|           Just (QS.One  one) -> [one]
+|           Nothing -> []
+|   
+-- UNFINISHED PARENTHESES ------------------------------------------------- REPL
+
+I just saw an open parenthesis, but I got stuck here:
+
+8|           Just (QS.Many (List.map QS.Number b)) ->b
+                            ^
+I was expecting to see a pattern next. Maybe it will end up being something like
+(x,y) or (name, _)?
+
+> Just (QS.Many z) -> List.map (\(QS.Number c) -> c) z
+|   
+-- UNEXPECTED ARROW ------------------------------------------------------- REPL
+
+I was partway through parsing an orderIDparser when I got stuck on this arrow:
+
+16|   Just (QS.Many z) -> List.map (\(QS.Number c) -> c) z
+                       ^^
+Arrows should only appear in `case` expressions and anonymous functions.
+Maybe it was supposed to be a > sign instead?
+
+Note: The syntax for anonymous functions is (\x -> x + 1) so the arguments all
+appear after the backslash and before the arrow. Maybe a backslash is missing
+earlier?
+
+> foo a =
+|   case a of
+| foo a =
+> 
+> 
+> case 1 of
+|   1 -> 3
+|   
+-- MISSING PATTERNS ------------------------------------------------------- REPL
+
+This `case` does not have branches for all possibilities:
+
+16|>  case 1 of
+17|>    1 -> 3
+
+Missing possibilities include:
+
+    _
+
+I would have to crash if I saw one of those. Add branches for them!
+
+Hint: If you want to write the code for each branch later, use `Debug.todo` as a
+placeholder. Read <https://elm-lang.org/0.19.1/missing-patterns> for more
+guidance on this workflow.
+
+> case 1 of
+|   1 -> 3
+|   _ -> 0
+|   
+3 : number
+> case 1 of
+|   1 -> 3
+|   1-> 3
+|   _ -> 0
+|   
+-- REDUNDANT PATTERN ------------------------------------------------------ REPL
+
+The 2nd pattern is redundant:
+
+16|   case 1 of
+17|     1 -> 3
+18|>    1-> 3
+19|     _ -> 0
+
+Any value with this shape will be handled by a previous pattern, so it should be
+removed.
+
+> case 1 of
+|   1 -> 
+|   case 4 of
+|     4->4
+|     _->10
+|   _ -> 0
+|   
+-- UNFINISHED CASE -------------------------------------------------------- REPL
+
+I was partway through parsing a `case` orderIDparser, but I got stuck here:
+
+16|   case 1 of
+17|     1 -> 
+            ^
+I was expecting to see an orderIDparser next. What should I do when I run into this
+particular pattern?
+
+Note: Here is an example of a valid `case` orderIDparser for reference.
+
+    case maybeWidth of
+      Just width ->
+        width + 200
+
+      Nothing ->
+        400
+
+Notice the indentation. Each pattern is aligned, and each branch is indented a
+bit more than the corresponding pattern. That is important!
+
+> case 1 of
+|   1 -> 
+|   (
+|   case 4 of
+|     4->4
+|     _->10
+|   )
+|   _ -> 0
+|   
+-- UNFINISHED CASE -------------------------------------------------------- REPL
+
+I was partway through parsing a `case` orderIDparser, but I got stuck here:
+
+16|   case 1 of
+17|     1 -> 
+            ^
+I was expecting to see an orderIDparser next. What should I do when I run into this
+particular pattern?
+
+Note: Here is an example of a valid `case` orderIDparser for reference.
+
+    case maybeWidth of
+      Just width ->
+        width + 200
+
+      Nothing ->
+        400
+
+Notice the indentation. Each pattern is aligned, and each branch is indented a
+bit more than the corresponding pattern. That is important!
+
+> 
+foo        parser     Dict       QS         :help      :reset
+maybelist  Foo        List       :exit      :quit
+> maybelist
+Just (Many [Number 1,Number 2])
+    : Maybe QS.OneOrMany
+> list
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `list` variable:
+
+16|   list
+      ^^^^
+These names seem close though:
+
+    abs
+    asin
+    cos
+    min
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+>  case maybelist of 
+|   |   Just (QS.Many z) -> List.map (\c -> c) z
+|   |   _ -> []
+|   
+-- PROBLEM IN PATTERN ----------------------------------------------------- REPL
+
+I wanted to parse a pattern next, but I got stuck here:
+
+17|     |   Just (QS.Many z) -> List.map (\c -> c) z
+        ^
+I am not sure why I am getting stuck exactly. I just know that I want a pattern
+next. Something as simple as maybeHeight or result would work!
+
+> case maybelist of 
+|    Just (QS.Many z) -> List.map (\c -> c) z
+|    _ -> []
+|   
+[Number 1,Number 2] : List QS.Primitive
+> mylist= case maybelist of 
+|    Just (QS.Many z) -> List.map (\c -> c) z
+|    _ -> []
+|   
+[Number 1,Number 2] : List QS.Primitive
+> mylist
+[Number 1,Number 2] : List QS.Primitive
+> 
+  [Restored 4 Mar 2021 at 11:34:48]
+Welcome to fish, the friendly interactive shell
+david@davids-MacBook-Pro ~/p/mandm> elm repl                                                         (base) 
+---- Elm 0.19.1 ----------------------------------------------------------------
+Say :help for help and :exit to exit! More at <https://elm-lang.org/0.19.1/repl>
+--------------------------------------------------------------------------------
+> import QS
+> import Dict
+> oneis
+Dict.fromList [("orderID",One (Number 10101))]
+    : QS.Query
+> manyparser = QS.parse QS.config "?orderID[]=1&orderID[]=2"
+Dict.fromList [("orderID",Many [Number 1,Number 2])]
+    : QS.Query
+> oneis = Dict.get "orderID" oneparser
+Just (One (Number 10101))
+    : Maybe QS.OneOrMany
+> manyis = Dict.get "orderID" manyparser
+Just (Many [Number 1,Number 2])
+    : Maybe QS.OneOrMany
+> oneis
+Just (One (Number 10101))
+    : Maybe QS.OneOrMany
+> many
+manyis      manyparser
+> manyis
+Just (Many [Number 1,Number 2])
+    : Maybe QS.OneOrMany
+> > manyparser = QS.parse QS.config "?orderID[]=1&orderID[]=2"
+|   Dict.fromList [("orderID",Many [Number 1,Number 2])]
+|       : QS.Query
+|   > oneis = Dict.get "orderID" oneparser
+|   Just (One (Number 10101))
+|       : Maybe QS.OneOrMany
+|   > manyis = Dict.get "orderID" manyparser
+|   Just (Many [Number 1,Number 2])
+|       : Maybe QS.OneOrMany
+|   
+-- MISSING EXPRESSION ----------------------------------------------------- REPL
+
+I am partway through parsing the `repl_input_value_` definition, but I got stuck
+here:
+
+8| repl_input_value_ =
+9|   > manyparser = QS.parse QS.config "?orderID[]=1&orderID[]=2"
+     ^
+I was expecting to see an orderIDparser like 42 or "hello". Once there is something
+there, I can probably give a more specific hint!
+
+Note: This can also happen if run into reserved words like `let` or `as`
+unexpectedly. Or if I run into operators in unexpected spots. Point is, there
+are a couple ways I can get confused and give sort of weird advice!
+
+> case manyis of
+|   Just (QS.Many [QS.Number x, QS.Number y]) -> [x,y]
+|   _ -> []
+|   
+[1,2] : List Float
+> manyis
+Just (Many [Number 1,Number 2])
+    : Maybe QS.OneOrMany
+> arrayonly = case manyis of
+|   Just (QS.Many [QS.Number x, QS.Number y]) -> [x,y]
+|   _ -> []
+|   
+[1,2] : List Float
+> maybearray = case Just manyis of
+|   QS.Many [QS.Number x, QS.Number y] -> z
+|   _ -> []
+|   
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `z` variable:
+
+11|   QS.Many [QS.Number x, QS.Number y] -> z
+                                            ^
+These names seem close though:
+
+    e
+    x
+    y
+    pi
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> arrayonly = case manyis of
+|   QS.Many z-> z
+|   _ -> []
+|   
+-- TYPE MISMATCH ---------------------------------------------------------- REPL
+
+The 1st pattern in this `case` causing a mismatch:
+
+4| arrayonly = case manyis of
+5|>  QS.Many z-> z
+6|   _ -> []
+
+The first pattern is trying to match `Many` values of type:
+
+    QS.OneOrMany
+
+But the orderIDparser between `case` and `of` is:
+
+    Maybe QS.OneOrMany
+
+These can never match! Is the pattern the problem? Or is it the orderIDparser?
+
+>   QS.OneOrMany z-> z
+|   _ -> []
+|   
+-- UNEXPECTED ARROW ------------------------------------------------------- REPL
+
+I was partway through parsing an orderIDparser when I got stuck on this arrow:
+
+13|     QS.OneOrMany z-> z
+                      ^^
+Arrows should only appear in `case` expressions and anonymous functions.
+Maybe it was supposed to be a > sign instead?
+
+Note: The syntax for anonymous functions is (\x -> x + 1) so the arguments all
+appear after the backslash and before the arrow. Maybe a backslash is missing
+earlier?
+
+> arrayonly = case manyis of
+|   _ -> []
+> maybearray = case Just manyis of
+|   QS.OneOrMany z-> z
+|   _ -> []
+|   
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `QS.OneOrMany` variant:
+
+11|   QS.OneOrMany z-> z
+      ^^^^^^^^^^^^
+The `QS` module does not expose a `OneOrMany` variant. These names seem close
+though:
+
+    QS.Many
+    QS.Boolean
+    QS.One
+    QS.Number
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> maybearray = case Just manyis of
+|    z-> z
+|    _ -> []
+|   
+-- TYPE MISMATCH ---------------------------------------------------------- REPL
+
+The 2nd branch of this `case` does not match all the previous branches:
+
+10| maybearray = case Just manyis of
+11|    z-> z
+12|    _ -> []
+            ^^
+The 2nd branch is a list of type:
+
+    List a
+
+But all the previous branches result in:
+
+    Maybe (Maybe QS.OneOrMany)
+
+Hint: All branches in a `case` must produce the same type of values. This way,
+no matter which branch we take, the result is always a consistent shape. Read
+<https://elm-lang.org/0.19.1/custom-types> to learn how to “mix” types.
+
+> 
+> 
+> 
+> many
+manyis      manyparser
+> manyis
+Just (Many [Number 1,Number 2])
+    : Maybe QS.OneOrMany
+> maybearray = case Just manyis of
+|    z-> z
+|    Nothing -> _
+|   
+-- MISSING EXPRESSION ----------------------------------------------------- REPL
+
+I am partway through parsing a `case` orderIDparser, but I got stuck here:
+
+4| maybearray = case Just manyis of
+5|    z-> z
+6|    Nothing -> _
+                 ^
+I was expecting to see an orderIDparser like 42 or "hello". Once there is something
+there, I can probably give a more specific hint!
+
+Note: This can also happen if run into reserved words like `let` or `as`
+unexpectedly. Or if I run into operators in unexpected spots. Point is, there
+are a couple ways I can get confused and give sort of weird advice!
+
+> maybearray = case Just manyis of
+|    z-> z
+|    Nothing -> []
+|   
+-- TYPE MISMATCH ---------------------------------------------------------- REPL
+
+The 2nd branch of this `case` does not match all the previous branches:
+
+10| maybearray = case Just manyis of
+11|    z-> z
+12|    Nothing -> []
+                  ^^
+The 2nd branch is a list of type:
+
+    List a
+
+But all the previous branches result in:
+
+    Maybe (Maybe QS.OneOrMany)
+
+Hint: All branches in a `case` must produce the same type of values. This way,
+no matter which branch we take, the result is always a consistent shape. Read
+<https://elm-lang.org/0.19.1/custom-types> to learn how to “mix” types.
+
+> maybearray = case Just manyis of
+|    QS.Many z-> z
+|    Nothing -> []
+|   
+-- TYPE MISMATCH ---------------------------------------------------------- REPL
+
+The 1st pattern in this `case` causing a mismatch:
+
+10| maybearray = case Just manyis of
+11|>   QS.Many z-> z
+12|    Nothing -> []
+
+The first pattern is trying to match `Many` values of type:
+
+    QS.OneOrMany
+
+But the orderIDparser between `case` and `of` is:
+
+    Maybe (Maybe QS.OneOrMany)
+
+These can never match! Is the pattern the problem? Or is it the orderIDparser?
+
+> arrayis
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `arrayis` variable:
+
+13|   arrayis
+      ^^^^^^^
+These names seem close though:
+
+    always
+    arrayonly
+    manyis
+    abs
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> arrayis
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `arrayis` variable:
+
+13|   arrayis
+      ^^^^^^^
+These names seem close though:
+
+    always
+    arrayonly
+    manyis
+    abs
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> arrayonly
+[1,2] : List Float
+> array
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `array` variable:
+
+13|   array
+      ^^^^^
+These names seem close though:
+
+    always
+    atan
+    abs
+    acos
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> manyis
+Just (Many [Number 1,Number 2])
+    : Maybe QS.OneOrMany
+> maybearray = case (Just x) of
+|    z-> z
+|    Nothing -> []
+|   
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `x` variable:
+
+10| maybearray = case (Just x) of
+                            ^
+These names seem close though:
+
+    e
+    max
+    pi
+    xor
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> maybearray = case (Just x) of
+|    x-> z
+|   
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `x` variable:
+
+10| maybearray = case (Just x) of
+                            ^
+These names seem close though:
+
+    e
+    max
+    pi
+    xor
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `z` variable:
+
+11|    x-> z
+           ^
+These names seem close though:
+
+    e
+    x
+    pi
+    abs
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> maybearray = case (Just _) of
+|    z-> z
+|    Nothing -> []
+|   
+-- UNFINISHED PARENTHESES ------------------------------------------------- REPL
+
+I was expecting to see a closing parentheses next, but I got stuck here:
+
+4| maybearray = case (Just _) of
+                           ^
+Try adding a ) to see if that helps?
+
+Note: I can get stuck when I run into keywords, operators, parentheses, or
+brackets unexpectedly. So there may be some earlier syntax trouble (like extra
+parenthesis or missing brackets) that is confusing me.
+
+> maybearray = case (Just (Many(z))) of
+|    z-> z
+|    Nothing -> []
+|   
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `Many` variant:
+
+10| maybearray = case (Just (Many(z))) of
+                             ^^^^
+These names seem close though:
+
+    QS.Many
+    EQ
+    Err
+    False
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `z` variable:
+
+10| maybearray = case (Just (Many(z))) of
+                                  ^
+These names seem close though:
+
+    e
+    pi
+    abs
+    cos
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+>  foo a =
+|      case a of
+|        Just (QS.Many b) -> -- b
+|           List.map (\(QS.Primitive c) -> c)  b
+|        Just (QS.One c) -> [c]
+|        Nothing -> []
+|   
+-- UNEXPECTED EQUALS ------------------------------------------------------ REPL
+
+I was not expecting to see this equals sign:
+
+13|    foo a =
+             ^
+Maybe you want == instead? To check if two values are equal?
+
+Note: I may be getting confused by your indentation. I think I am still parsing
+the `repl_input_value_` definition. Is this supposed to be part of a definition
+after that? If so, the problem may be a bit before the equals sign. I need all
+definitions to be indented exactly the same amount, so the problem may be that
+this new definition has too many spaces in front of it.
+
+> foo a =
+|      case a of
+|        Just (QS.Many b) -> -- b
+|           List.map (\(QS.Primitive c) -> c)  b
+|        Just (QS.One c) -> [c]
+|        Nothing -> []
+|   
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `QS.Primitive` variant:
+
+11|           List.map (\(QS.Primitive c) -> c)  b
+                          ^^^^^^^^^^^^
+The `QS` module does not expose a `Primitive` variant. These names seem close
+though:
+
+    QS.Many
+    QS.Number
+    QS.One
+    QS.Str
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> foo a =
+|      case a of
+|        Just (QS.Many b) -> b
+|        Just (QS.One c) -> [c]
+|        Nothing -> []
+|   
+<function> : Maybe QS.OneOrMany -> List QS.Primitive
+> foo arrayonly
+-- TYPE MISMATCH ---------------------------------------------------------- REPL
+
+The 1st argument to `foo` is not what I expect:
+
+19|   foo arrayonly
+          ^^^^^^^^^
+This `arrayonly` value is a:
+
+    List Float
+
+But `foo` needs the 1st argument to be:
+
+    Maybe QS.OneOrMany
+
+> foo manyis
+[Number 1,Number 2] : List QS.Primitive
+> fullarray = foo manyis
+[Number 1,Number 2] : List QS.Primitive
+> fullarray
+[Number 1,Number 2] : List QS.Primitive
+> List.head(fullarray)
+Just (Number 1) : Maybe QS.Primitive
+> headar = List.head(fullarray)
+Just (Number 1) : Maybe QS.Primitive
+> headar
+Just (Number 1) : Maybe QS.Primitive
+> casee headar of
+|   Just (Number _) -> "Num"
+|   Nothing -> "nope"
+|   
+-- RESERVED WORD ---------------------------------------------------------- REPL
+
+I got stuck on this reserved word:
+
+21|   casee headar of
+                   ^^
+The name `of` is reserved, so try using a different name?
+
+> case headar of
+|   Just (Number _) -> "Num"
+|   Nothing -> "nope"
+|   
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `Number` variant:
+
+22|     Just (Number _) -> "Num"
+              ^^^^^^
+These names seem close though:
+
+    QS.Number
+    QS.Str
+    EQ
+    Err
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> case headar of
+|   Just (QS.Number _) -> "Num"
+|   Nothing -> "nope"
+|   
+-- MISSING PATTERNS ------------------------------------------------------- REPL
+
+This `case` does not have branches for all possibilities:
+
+21|>  case headar of
+22|>    Just (QS.Number _) -> "Num"
+23|>    Nothing -> "nope"
+
+Missing possibilities include:
+
+    Just (Boolean _)
+    Just (Str _)
+
+I would have to crash if I saw one of those. Add branches for them!
+
+Hint: If you want to write the code for each branch later, use `Debug.todo` as a
+placeholder. Read <https://elm-lang.org/0.19.1/missing-patterns> for more
+guidance on this workflow.
+
+> case headar of
+|   Just (QS.Number _) -> "Num"
+|   Just (QS.Boolean _) -> "Bool"
+|   Just (QS.Str _) -> "Str"
+|   
+-- MISSING PATTERNS ------------------------------------------------------- REPL
+
+This `case` does not have branches for all possibilities:
+
+21|>  case headar of
+22|>    Just (QS.Number _) -> "Num"
+23|>    Just (QS.Boolean _) -> "Bool"
+24|>    Just (QS.Str _) -> "Str"
+
+Missing possibilities include:
+
+    Nothing
+
+I would have to crash if I saw one of those. Add branches for them!
+
+Hint: If you want to write the code for each branch later, use `Debug.todo` as a
+placeholder. Read <https://elm-lang.org/0.19.1/missing-patterns> for more
+guidance on this workflow.
+
+> case headar of
+|   Just (QS.Number _) -> "Num"
+|   Just (QS.Boolean _) -> "Bool"
+|   Just (QS.Str _) -> "Str"
+|   Nothing -> "nope"
+|   
+"Num" : String
+> test qs =
+| case qs of
+|   Just (QS.Number _) -> "Num"
+|   Just (QS.Boolean _) -> "Bool"
+|   Just (QS.Str _) -> "Str"
+|   Nothing -> "nope"
+|   
+-- UNFINISHED DEFINITION -------------------------------------------------- REPL
+
+I got stuck while parsing the `test` definition:
+
+4| test qs =
+            ^
+I was expecting to see an orderIDparser next. What is it equal to?
+
+Here is a valid definition (with a type annotation) for reference:
+
+    greet : String -> String
+    greet name =
+      "Hello " ++ name ++ "!"
+
+The top line (called a "type annotation") is optional. You can leave it off if
+you want. As you get more comfortable with Elm and as your project grows, it
+becomes more and more valuable to add them though! They work great as
+compiler-verified documentation, and they often improve error messages!
+
+> test qs =
+|   case qs of
+|     Just (QS.Number _) -> "Num"
+|     Just (QS.Boolean _) -> "Bool"
+|     Just (QS.Str _) -> "Str"
+|     Nothing -> "nope"
+|   
+<function> : Maybe QS.Primitive -> String
+> test headar
+"Num" : String
+> header
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `header` variable:
+
+28|   header
+      ^^^^^^
+These names seem close though:
+
+    headar
+    never
+    negate
+    QS.get
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> headar
+Just (Number 1) : Maybe QS.Primitive
+> oneparser
+Dict.fromList [("orderID",One (Number 10101))]
+    : QS.Query
+> one
+oneis      oneparser
+> oneis
+Just (One (Number 10101))
+    : Maybe QS.OneOrMany
+> test oneis
+-- TYPE MISMATCH ---------------------------------------------------------- REPL
+
+The 1st argument to `test` is not what I expect:
+
+28|   test oneis
+           ^^^^^
+This `oneis` value is a:
+
+    Maybe QS.OneOrMany
+
+But `test` needs the 1st argument to be:
+
+    Maybe QS.Primitive
+
+> headar
+Just (Number 1) : Maybe QS.Primitive
+> oneis
+Just (One (Number 10101))
+    : Maybe QS.OneOrMany
+> foo onei
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `onei` variable:
+
+28|   foo onei
+          ^^^^
+These names seem close though:
+
+    oneis
+    e
+    not
+    pi
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> foo oneis
+[Number 10101] : List QS.Primitive
+> test qs =
+|   case qs of
+|     Just (QS.Number _) -> "Num"
+|     Just (QS.Boolean _) -> "Bool"
+|     Just (QS.Str _) -> "Str"
+| Just (QS.One c) ->
+arrayonly   fullarray   manyis      oneis       test        QS          :help       :reset
+foo         headar      manyparser  oneparser   Dict        :exit       :quit
+|     Just (QS.One _) -> "One"
+|     Nothing -> "nope"
+|   
+-- TYPE MISMATCH ---------------------------------------------------------- REPL
+
+The 4th pattern in this `case` does not match the previous ones.
+
+21|   case qs of
+22|     Just (QS.Number _) -> "Num"
+23|     Just (QS.Boolean _) -> "Bool"
+24|     Just (QS.Str _) -> "Str"
+25|>    Just (QS.One _) -> "One"
+26|     Nothing -> "nope"
+
+The 4th pattern is trying to match `Just` values of type:
+
+    Maybe QS.OneOrMany
+
+But all the previous patterns match:
+
+    Maybe QS.Primitive
+
+Note: A `case` orderIDparser can only handle one type of value, so you may want to
+use <https://elm-lang.org/0.19.1/custom-types> to handle “mixing” types.
+
+> oneis
+Just (One (Number 10101))
+    : Maybe QS.OneOrMany
+> test qs =
+|   case qs of
+|     Just (QS.Number _) -> "Num"
+|     Just (QS.Boolean _) -> "Bool"
+|     Just (QS.Str _) -> "Str"
+|     Just (QS.One (Number _) -> "One"
+|     Nothing -> "nope"
+|   
+-- UNEXPECTED SYMBOL ------------------------------------------------------ REPL
+
+I ran into the -> symbol unexpectedly in this pattern:
+
+9|     Just (QS.One (Number _) -> "One"
+                               ^^
+Only the :: symbol that works in patterns. It is useful if you are pattern
+matching on lists, trying to get the first element off the front. Did you want
+that instead?
+
+> test qs =
+|   case qs of
+|     Just (QS.Number _) -> "Num"
+|     Just (QS.Boolean _) -> "Bool"
+|     Just (QS.Str _) -> "Str"
+|     Just (QS.One (Number _)) -> "One"
+|     Nothing -> "nope"
+|   
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `Number` variant:
+
+25|     Just (QS.One (Number _)) -> "One"
+                      ^^^^^^
+These names seem close though:
+
+    QS.Number
+    QS.Str
+    EQ
+    Err
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> test qs =
+|   case qs of
+|     Just (QS.Number _) -> "Num"
+|     Just (QS.Boolean _) -> "Bool"
+|     Just (QS.Str _) -> "Str"
+|     Just (QS.One (QS.Number _)) -> "One"
+|     Nothing -> "nope"
+|   
+-- TYPE MISMATCH ---------------------------------------------------------- REPL
+
+The 4th pattern in this `case` does not match the previous ones.
+
+21|   case qs of
+22|     Just (QS.Number _) -> "Num"
+23|     Just (QS.Boolean _) -> "Bool"
+24|     Just (QS.Str _) -> "Str"
+25|>    Just (QS.One (QS.Number _)) -> "One"
+26|     Nothing -> "nope"
+
+The 4th pattern is trying to match `Just` values of type:
+
+    Maybe QS.OneOrMany
+
+But all the previous patterns match:
+
+    Maybe QS.Primitive
+
+Note: A `case` orderIDparser can only handle one type of value, so you may want to
+use <https://elm-lang.org/0.19.1/custom-types> to handle “mixing” types.
+
+> oneis
+Just (One (Number 10101))
+    : Maybe QS.OneOrMany
+> test qs =
+|   case qs of
+|     Just (QS.Number _) -> "Num"
+|     Just (QS.Boolean _) -> "Bool"
+|     Just (QS.Str _) -> "Str"
+|     Just (QS.One (Number _)) -> "One"
+|     Nothing -> "nope"
+|   
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `Number` variant:
+
+25|     Just (QS.One (Number _)) -> "One"
+                      ^^^^^^
+These names seem close though:
+
+    QS.Number
+    QS.Str
+    EQ
+    Err
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> test qs =
+|   case qs of
+|     Just (QS.Number _) -> "Num"
+|     Just (QS.Boolean _) -> "Bool"
+|     Just (QS.Str _) -> "Str"
+|     Just (QS.One (QS.Number _)) -> "One"
+|     Nothing -> "nope"
+|   
+-- TYPE MISMATCH ---------------------------------------------------------- REPL
+
+The 4th pattern in this `case` does not match the previous ones.
+
+21|   case qs of
+22|     Just (QS.Number _) -> "Num"
+23|     Just (QS.Boolean _) -> "Bool"
+24|     Just (QS.Str _) -> "Str"
+25|>    Just (QS.One (QS.Number _)) -> "One"
+26|     Nothing -> "nope"
+
+The 4th pattern is trying to match `Just` values of type:
+
+    Maybe QS.OneOrMany
+
+But all the previous patterns match:
+
+    Maybe QS.Primitive
+
+Note: A `case` orderIDparser can only handle one type of value, so you may want to
+use <https://elm-lang.org/0.19.1/custom-types> to handle “mixing” types.
+
+> oneis
+Just (One (Number 10101))
+    : Maybe QS.OneOrMany
+> manyis
+Just (Many [Number 1,Number 2])
+    : Maybe QS.OneOrMany
+> test qs =
+|   case qs of
+|     Just (Many (QS.Number _)) -> "Num"
+|     Just (QS.Boolean _)) -> "Bool"
+> test qs =
+|     Just (QS.Many (QS.Number _)) -> "Num"
+|     Just (QS.Many (QS.Boolean _)) -> "Bool"
+|     Just (QS.Many (QS.Str _)) -> "Str"
+|     Just (QS.One  (QS.Number _)) -> "One"
+|     Nothing -> "nope"
+|   
+-- UNFINISHED PARENTHESES ------------------------------------------------- REPL
+
+I was expecting to see a closing parentheses next, but I got stuck here:
+
+5|     Just (QS.Many (QS.Number _)) -> "Num"
+                                ^
+Try adding a ) to see if that helps?
+
+Note: I can get stuck when I run into keywords, operators, parentheses, or
+brackets unexpectedly. So there may be some earlier syntax trouble (like extra
+parenthesis or missing brackets) that is confusing me.
+
+>     Nothing -> "nope"
+> test qs =
+|   case qs of
+|     Just (QS.Many (QS.Number _)) -> "Num"
+|     Just (QS.Many (QS.Boolean _)) -> "Bool"
+|     Just (QS.Many (QS.Str _)) -> "Str"
+|     Just (QS.One  (QS.Number _)) -> "One"
+|     Nothing -> "nope"
+|   
+-- TYPE MISMATCH ---------------------------------------------------------- REPL
+
+The 1st argument to `Many` is weird.
+
+24|     Just (QS.Many (QS.Str _)) -> "Str"
+                       ^^^^^^^^
+It is trying to match `Str` values of type:
+
+    QS.Primitive
+
+But `Many` needs its 1st argument to be:
+
+    List QS.Primitive
+
+-- TYPE MISMATCH ---------------------------------------------------------- REPL
+
+The 1st argument to `Many` is weird.
+
+23|     Just (QS.Many (QS.Boolean _)) -> "Bool"
+                       ^^^^^^^^^^^^
+It is trying to match `Boolean` values of type:
+
+    QS.Primitive
+
+But `Many` needs its 1st argument to be:
+
+    List QS.Primitive
+
+-- TYPE MISMATCH ---------------------------------------------------------- REPL
+
+The 1st argument to `Many` is weird.
+
+22|     Just (QS.Many (QS.Number _)) -> "Num"
+                       ^^^^^^^^^^^
+It is trying to match `Number` values of type:
+
+    QS.Primitive
+
+But `Many` needs its 1st argument to be:
+
+    List QS.Primitive
+
+> 
+> 
+> 
+> test qs =
+|   case qs of
+|     Just (QS.Many (QS.Number z )) -> "Num"
+|     Just (QS.Many (QS.Str _)) -> "Str"
+> 
+> import Url.Parser exposing (Parser, (</>), (<?>), int, map, oneOf, s, string)
+> import Url.Parser.Query as Query
+> type Route
+|       = Home
+|       | BlogList (Maybe String)
+|       | BlogPost Int
+|   
+> import Url.Parser as P exposing (Parser, (</>), (<?>), s, top)
+> import Url.Parser.Query as Q
+> P.parse routeParser ""
+-- NAMING ERROR ----------------------------------------------------------- REPL
+
+I cannot find a `routeParser` variable:
+
+35|   P.parse routeParser ""
+              ^^^^^^^^^^^
+These names seem close though:
+
+    oneparser
+    manyparser
+    P.parse
+    QS.parse
+
+Hint: Read <https://elm-lang.org/0.19.1/imports> to see how `import`
+declarations work in Elm.
+
+> routeParser : Parser (Route -> a) a
+| routeParser routeParser =
+|       P.oneOf
+|           [ P.map Home top
+|           , P.map BlogList (s "blog" <?> Q.string "search")
+|           , P.map BlogPost (s "blog" </> P.int)
+|           ]
+|   
+-- BAD TYPE ANNOTATION ---------------------------------------------------- REPL
+
+The type annotation for `routeParser` says it can accept 0 arguments, but the
+definition says it has 1 argument:
+
+28| routeParser routeParser =
+                ^^^^^^^^^^^
+Is the type annotation missing something? Should some argument be deleted? Maybe
+some parentheses are missing?
+
+> 
+===========
+
+
+> blog =
+|     s "blog" </>
+|       P.oneOf
+|         [ P.map Overview top
+|         , P.map Post (s "post" </> P.int)
+|         ]
+|   
+Parser <function> : Parser (Route -> c) c
+
+> blogurl1= Url.fromString "http://localhost:8000/blog/"
+Just { fragment = Nothing, host = "localhost", path = "/blog/", port_ = Just 8000, protocol = Http, query = Nothing }
+
+
+> testurl : Maybe Url.Url -> String
+| testurl url =
+|   case url of 
+|     Just  x -> x.host
+|     Nothing -> Debug.log "URl:" "not sure"
+|   
+<function> : Maybe Url.Url -> String
+> testurl blogurl1
+"localhost" : String
+
+======
+routeParser : Parser (Route -> a) a
+routeParser =
+    P.oneOf
+        [ P.map Home top
+        , P.map BlogList (s "blog" <?> Q.string "search")
+        , P.map BlogPost (s "blog" </> P.int)
+        ]
+
+======
+
+This compiles ok:
+
+import Url exposing (Url)
+import Url.Parser as P exposing (Parser, (</>), (<?>), s, top)
+import Url.Parser.Query as Q
+
+type Route = Home|Products|Contact|NotFound
+
+parseFragment : Maybe String -> Route
+| parseFragment fragment=
+|   case fragment of
+|     Just "home" ->
+|         Home
+|     Just "products" ->
+|         Products
+|     Just "contact" ->
+|         Contact
+|     _ -> NotFound
+<function> : Maybe String -> Route
+
+> routeParser : Parser (Route -> Route) Route
+| routeParser =
+|   P.map parseFragment (P.fragment identity)
+|   
+Parser <function> : Parser (Route -> Route) Route
+
+> fromUrl : Url -> Route
+| fromUrl = P.parse routeParser >> Maybe.withDefault NotFound
+|   
+<function> : Url -> Route
+
+========
+> url = Url.fromString "http://localhost/?orderID=2"
+
+> qp = s "" </> s "q" <?> (Q.string "orderID")
+
+> page qparser url2 = 
+     case (P.parse qparser  url2) of
+       Nothing -> "My query string: " ++ (Maybe.withDefault "empty" url2.query)
+       Just (Just v) ->  v
+       _ -> "fff"
+
+> run qparser url3 = case url3 of
+   Just x -> page qparser x
+   Nothing -> ""
+
+> run qp url
+"My query string: orderID=2" : String
+
+> page url
+    "My query string: order=2"  --broken parser
+--
+> qp = s "src" </> s "Main.elm" <?> (Q.string "orderID")
+> url = Url.fromString "http://localhost:8000/src/Main.elm?orderI=foo" --DELIB. WRONG QUERY orderI not ID :)
+> run qp url
+"fff" : String
+
+redo with proper query string:
+url = Url.fromString "http://localhost:8000/src/Main.elm?orderID=foo"
+> qp = s "src" </> s "Main.elm" <?> (Q.string "orderID")
+> run qp url
+"foo" : String --!! RIGHT!
+
+also, you need to provide a string to first part of parse combinator:
+> qp = s "src" </> s "" <?> (Q.string "orderID")
+> run qp url
+"My query string: orderID=foo" : String  --i.e. no result from bad parser
+
+> url = Url.fromString "http://localhost:8000/?orderID=foo" --invalid as 'path' empty
+
+---
+
+> url = Url.fromString "http://localhost:8000/src/Main.elm?post=2" 
+Just { fragment = Nothing, host = "localhost", path = "/src/Main.elm", port_ = Just 8000, protocol = Http, query = Just "post=2" }
+
+> qpnum = s "src" </> s "Main.elm" <?> (Q.int "post")
+Parser <function> : Parser (Maybe Int -> c) c
+
+page2 qparser url2 = 
+|   case (P.parse qparser  url2) of
+|      Nothing -> 0
+|      Just (Just v) ->  v
+|      _ -> 0
+<function>
+    : Parser (Maybe number -> Maybe number) (Maybe number) -> Url -> number
+
+> run2 qparser url3 = case url3 of
+|     Just x -> page2 qparser x
+|     Nothing -> 0
+|   
+<function>
+    : Parser (Maybe number -> Maybe number) (Maybe number) -> Maybe Url -> number
+
+> run2 qpnum url
+2 : Int --! yea...
+
+----
+> urllist = Url.fromString "http://localhost:8000/src/Main.elm?post=2&post=7" 
+
+> qplist = s "src" </> s "Main.elm" <?> (Q.custom "post" (List.filterMap String.toInt))
+Parser <function> : Parser (List Int -> c) c
+
+> page3 qparser url2 = 
+   case (P.parse qparser  url2) of
+    Nothing ->  []
+    Just (Just v) ->  v
+    _ ->  []
+    : Parser (Maybe (List a) -> Maybe (List a)) (Maybe (List a)) -> Url -> List a
+
+> runlist qpmylist url4 = 
+    case url4 of
+        Just u -> P.parse qpmylist u
+        Nothing -> Just []   
+<function>
+    : Parser (List a -> List a) (List a) -> Maybe Url -> Maybe (List a)
+
+> runlist qplist urllist
+Just [2,7] : Maybe (List Int)
+
+---
+shorter version:
+> runlist url5 = case url5 of
+   Just u -> P.parse (s "src" </> s "Main.elm" <?> (Q.custom "post" (List.filterMap String.toInt))) u 
+   Nothing -> Just [] 
+   
+<function> : Maybe Url -> Maybe (List Int)
+> runlist urllist
+Just [2,7] : Maybe (List Int)
+> 
+
+
+==========
+
+scratch:
+
+> import Url exposing (Url)
+> import Url.Parser as P exposing (Parser, (</>), (<?>), s, top)
+> import Url.Parser.Query as Q
+
+> type Route = QueryOrder|NoOrderFound
+
+
+> orderNo : Parser (Maybe Int)
+> orderNo = Q.int "q"
+Parser <function> : Q.Parser (Maybe Int)
+
+==========
+*********
+==========
+
+
+Parsing strings 
+
+https://jxxcarlson.medium.com/implementing-the-mini-language-arith-in-elm-a522f9a7101
+
+
+> run (chompIf (\c -> c== 'T')) "T" --chompIf validates but produces a '()' not a string
+Ok () : Result (List DeadEnd) ()  --   <- the '()' is the unit output
+> run (chompIf (\c -> c== 'T')) "oT"
+Err [{ col = 1, problem = UnexpectedChar, row = 1 }]  --correctly fails to validate
+    : Result (List DeadEnd) ()
+
+ -- 
+> foo  =
+    getChompedString <|  --take chomped string from succeed. (succeed always succeeds & returns what's passed to it (a -> a))
+       succeed ()  
+        |. chompIf (\c -> c== 'T')
+   
+Parser <function> : Parser String
+> run foo "T"
+Ok "T" : Result (List DeadEnd) String
+> run foo "oT"
+Err [{ col = 1, problem = UnexpectedChar, row = 1 }]
+    : Result (List DeadEnd) String
+
+> foo  =
+    getChompedString <|
+       succeed ()
+        |. chompIf (\c -> c== 'T') -- OK on "Tr"
+        |. chompIf (\c -> c== 'r')
+
+> foo  =
+       getChompedString <|
+          succeed identity
+           |. chompIf (\c -> c== 'T')
+   
+Parser <function> : Parser (a -> a)
+> run foo "T"
+Ok <function> : Result (List DeadEnd) (a -> a) --WHY this?
+
+> foo = 
+      getChompedString <|
+        succeed identity
+        |= chompIf (\c -> c== 'T')
+
+> run foo "T"
+Ok () : Result (List DeadEnd) ()
+
+> foo2 = 
+      getChompedString <|
+        succeed identity
+        |. chompIf (\c -> c== 'T')
+   
+Parser <function> : Parser String
+> run foo "Tr"
+Ok "T" : Result (List DeadEnd) String
+-----
+
+> :reset
+> import Parser exposing (..)
+> myInt : Parser Int
+| myInt =
+|     oneOf
+|       [ succeed negate
+|           |. symbol "-"
+|           |= int
+|       , int
+|       ]
+|   
+Parser <function> : Parser Int
+
+> run myInt "-2"
+Ok -2 : Result (List DeadEnd) Int
+
+> myQ =
+|   succeed identity
+|     |. keyword "let"
+|     |. spaces
+|     |= symbol "["
+|     |. spaces
+|     |. symbol "="
+|   
+Parser <function> : Parser ()
+> run myQ "let [ ="
+
+does it allow keyword
+> myQ =
+   succeed identity
+        |. keyword "orderID=" 
+        |. spaces -- zero or more
+        |= int
+
+{- try keyword not spaces
+> run (token "orderID=") "orderID=6"
+Ok () : Result (List DeadEnd) ()
+-}
+
+Parser <function> : Parser Int
+> run myQ "orderID= 3"
+Ok 3 : Result (List DeadEnd) Int
+
+
+> run myQ "orderID=3344" --needs a space after =.
+Err [{ col = 1, problem = ExpectingKeyword "orderID=", row = 1 }]
+    : Result (List DeadEnd) Int
+
+> run myQ "orderID= 3344"
+Ok 3344 : Result (List DeadEnd) Int
+
+> run spaces "orderID=3"
+Ok () : Result (List DeadEnd) () --hmm
+
+> run (keyword "orderID=") "orderID="
+Ok () : Result (List DeadEnd) ()
+> run (keyword "orderID=4") "orderID="
+Err [{ col = 1, problem = ExpectingKeyword "orderID=4", row = 1 }]
+    : Result (List DeadEnd) ()
+
+Parser <function> : Parser Int
+myQ myToken =
+   succeed identity
+        |. token myToken  
+        |. spaces -- zero or more
+        |= int
+        |. end
+
+> run (myQ "orderID=") "orderID=689"
+Ok 689 : Result (List DeadEnd) Int
+> run (myQ "orderID=") "orderID=689&"
+Err [{ col = 12, problem = ExpectingEnd, row = 1 }]
+
+> run orderIDparser "orderID=" "orderID=234&orderID=33880" -- etc., also: "orderID=3356"
+ 
+mytoken = "orderID="
+
+querytoken :  Parser Int
+querytoken =
+   succeed identity
+        |. token mytoken  
+        |. spaces
+        |= int
+        |. symbol "&"
+        |. spaces
+        |= lazy (\_ -> querytoken)
+        -- |= lazy (\_ -> orderIDparser) -- <- do I need this? here?
+
+orderIDparser : String -> Parser Int  -- need loop not andThen
+orderIDparser token = 
+    querytoken token 
+    |> andThen 
+        (\maybe ->
+            case querytoken 
+
+        )
+
+=========
+https://jxxcarlson.medium.com/implementing-the-mini-language-arith-in-elm-a522f9a7101
+
+https://github.com/elm/parser/blob/1.1.0/examples/Math.elm
+
+https://package.elm-lang.org/packages/elm/parser/latest/Parser#%7C.
+
+querytoken : Parser Int
+querytoken  =
+succeed identity
+        |= int
+        |> andThen (\x -> querytoken x)
+
+
+type Qtype
+    = Str String
+    | LIST (List Int)
+
+parse : String -> Maybe Qtype
+parse str =
+    case run parser str of
+        Ok ast ->
+            Just ast
+
+        Err _ ->
+            Nothing
+
+parser : Parser Qtype
+parser =
+    oneof[
+        lazy (\_ -> list),
+        String
+    ]
+
+list : Parser Qtype
+list = 
+    (
+        succeed identity
+            |. spaces
+            |= integer
+        --    |. symbol "&"
+            |. spaces
+    )
+    |> map LIST
+
+integer : Parser Qtype
+integer =
+    (succeed identity
+        |= int
+    )
+    --    |> map LIST
+> run list "3"
+Err [{ col = 2, problem = ExpectingSymbol "&", row = 1 }]
+    : Result (List DeadEnd) Int
+> run list "3&"
+Ok 3 : Result (List DeadEnd) Int
+
+
+>run integer "3"
+Ok 3 : Result (List DeadEnd) Int
+
+
+                    expression : Parser Expr
+                    expression =
+                    term
+                        |> andThen (expressionHelp [])
+
+
+                    expressionHelp : List (Expr, Operator) -> Expr -> Parser Expr
+                    expressionHelp revOps expr =
+                    oneOf
+                        [ succeed (whatshouldthisbe?)
+                            |. spaces
+                            |= term
+                            |> andThen (\(thing) -> expressionHelp ((expr,op) :: revOps) newExpr)
+                        , lazy (\_ -> succeed (finalize revOps expr))
+    ]
+
+---
+
+https://github.com/elm/parser/blob/master/semantics.md#either--parser-a---parser-a---parser-a
+
+https://ellie-app.com/cWTjrPY7Rdxa1
+version 1) partly doing 'list : Parser Oid': https://ellie-app.com/cZZSc7LBpf7a1
+version 2) trailing & still an issue;
+    "OrderID= 5&OrderID=7&OrderID=4&"
+    https://ellie-app.com/d2TDNXWsBGDa1
+v3: works https://ellie-app.com/d3NK5MRbT5ra1 -> "OrderID=6 & OrderID=99 & OrderID=2" parsed OK
+
+> import Parser exposing (..)
+
+>tooid "OrderID=327&OrderID=2340"
+Just ([327, 2340])
+>tooid "OrderID=321397"
+Just (321397)
+
+type Oid
+    = Num Int
+    | List Int
+
+                            --string not needed? 
+                            string : Parser Oid
+                            string =
+                                oneOf [ lazy (\_ -> list), string ]
+
+                            {- string : Parser Oid
+                            string =
+                                getChompedString
+                                    (succeed ()
+                                        |. chompIf (\c -> Char.isAlpha c)
+                                        |. chompWhile (\c -> c /= ' ' && c /= ')')
+                                    )
+                                    |> map (String.trim >> Str)
+                            -}
+
+
+
+querydetails : Parser Oid  --not Oid type as we want a number from "OrderID=34234"
+querydetails =
+    oneOf [ lazy (\_ -> list), integer ]
+
+term : Parser Oid
+term =
+    [
+    integer
+    , succeed identity -- identity? just one thing returned
+        |. symbol "["
+        |= querydetails
+        |. symbol "]"
+    ]
+
+
+integer : Parser Oid
+integer =
+    (succeed Num  --succeed identity
+        |. token "OrderID="
+        |. spaces
+        |= int
+        |. spaces
+    )
+
+integer2 =
+    (succeed identity
+        |. token "OrderID="
+        |. spaces      
+        |= oneOf
+        [
+        succeed identity
+            |= int
+            |. spaces
+            |. symbol "&"
+            |. spaces
+        ,   succeed identity
+            |= int        
+            |. spaces
+           -- |. end 
+        ]     
+    )
+--------
+
+-- try to get integer to recognise, e.g., 
+    -- either  'OrderID=6&' or terminal 'OrderID=3<string-end>' as OK
+
+--compiles
+optionalampersand : Parser (a -> a) 
+optionalampersand = 
+    oneOf
+    [
+        succeed identity
+            |. spaces        
+            |. symbol "&"        
+            |. spaces
+        , succeed identity
+            |. spaces
+            |. end
+    ]
+
+
+integer3 : : Parser (a -> a)
+integer3 =
+    (
+        succeed Num  --succeed identity
+        |. token "OrderID="
+        |. spaces
+        |= int
+        |. optionalampersand
+    )
+> run integer3 "OrderID=3 &"
+Ok (Num 3) : Result (List DeadEnd) Oid
+> run integer3 "OrderID=99"
+Ok (Num 99) : Result (List DeadEnd) Oid
+> run integer3 "OrderID=99 "
+Err [{ col = 12, problem = ExpectingSymbol "&", row = 1 }]
+    : Result (List DeadEnd) Oid
+
+-- seems to work...
+integer3a : Parser Int
+integer3a =
+    oneOf 
+    [   succeed identity
+        |. token "OrderID="
+        |. spaces
+        |= int
+        |. spaces
+        |. symbol "&"        
+        |. spaces        
+    , succeed identity
+        |. token "OrderID2="
+        |. spaces
+        |= int
+        |. spaces
+        |. end         
+    ]
+> run integer3a "OrderID2=3 &"
+Err [{ col = 12, problem = ExpectingEnd, row = 1 }]
+    : Result (List DeadEnd) Int
+> run integer3a "OrderID2=3 "
+Ok 3 : Result (List DeadEnd) Int
+
+
+--------
+
+
+
+-- OrderID=4 OrderID=5 -> Ok (OrdList [4,5])
+list : Parser Oid
+list = 
+    succeed identity
+    |. spaces
+    |= many integer3
+    |. spaces
+
+list2 = 
+    succeed identity
+    |. spaces
+    |= many integer
+    |. spaces
+    |= oneOf
+    [
+        succeed identity   --no see Parser type (Oid)
+            |. symbol "&"
+            |. spaces
+    ,   succeed identity
+            |. spaces
+            |. end  
+    ]    
+
+
+                                            list : Parser Oid
+                                            list =
+                                                (succeed identity
+                                                    |. token "OrderID="
+                                                    |. spaces
+                                                    |= many querydetails  --  Parser (List Oid)
+                                                    |. spaces
+                                                    -- |. symbol "&" -- unwanted
+                                                )
+                                                    |> map List
+
+                                            > list =
+                                                (succeed identity
+                                                    |. token "OrderID="
+                                                    |. spaces
+                                                    |= int
+                                                    |. spaces
+                                                    |. symbol "&"
+                                                )
+                                                    |> map List
+                                            Parser <function> : Parser Oid
+
+                                            > run list "OrderID=424&"
+                                            Ok (List 424) : Result (List DeadEnd) Oid
+                                            > run list "OrderID=424"
+                                            Err [{ col = 12, problem = ExpectingSymbol "&", row = 1 }]
+                                                : Result (List DeadEnd) Oid
+                                            > run list "OrderID=424&OrderID=4239&"
+                                            Ok (List 424) : Result (List DeadEnd) Oid
+
+
+many : Parser a -> Parser (List a)
+many p =
+    loop [] (manyHelp p)
+
+manyHelp : Parser a -> List a -> Parser (Step (List a) (List a))
+manyHelp p acc =
+    oneOf
+        [ succeed (\v -> Loop (v :: acc))
+            |= p
+            |. spaces
+        , succeed ()
+            |> map (\_ -> Done (List.reverse acc))
+        ]
+
+========
+WORKING VERSION!!
+
+https://ellie-app.com/d3NK5MRbT5ra1 -> "OrderID=6 & OrderID=99 & OrderID=2" parsed OK
+
+type Oid
+    = Num Int
+    | OrdList (List Int)
+
+optionalampersand : Parser (a -> a) 
+optionalampersand = 
+    oneOf
+    [
+        succeed identity
+            |. spaces        
+            |. symbol "&"        
+            |. spaces
+        , succeed identity
+            |. spaces
+            |. end
+    ]
+
+integer : Parser Int
+integer =
+    (
+        succeed identity  --succeed identity
+        |. token "OrderID="
+        |. spaces
+        |= int
+        |. optionalampersand
+    )
+
+-- likes "OrderID=3 OrderID=9" 
+list : Parser Oid
+list = 
+    succeed OrdList
+    |. spaces
+    |= many integer
+
+
+many : Parser a -> Parser (List a)
+many p =
+    loop [] (manyHelp p)
+
+manyHelp : Parser a -> List a -> Parser (Step (List a) (List a))
+manyHelp p acc =
+    oneOf
+        [ succeed (\v -> Loop (v :: acc))
+            |= p
+            |. spaces
+        , succeed ()
+            |> map (\_ -> Done (List.reverse acc))
+        ]

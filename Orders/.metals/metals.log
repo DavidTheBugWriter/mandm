@@ -1,0 +1,11 @@
+[0m2021.03.18 09:45:00 INFO  Started: Metals version 0.10.0 in workspace '/Users/david/projects/mandm/Orders' for client vscode 1.54.3.[0m
+[0m2021.03.18 09:45:05 INFO  time: initialize in 5.04s[0m
+[0m2021.03.18 09:45:15 WARN  Build server is not auto-connectable.[0m
+[0m2021.03.18 09:45:15 WARN  no build tool detected in workspace '/Users/david/projects/mandm/Orders'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+Mar 18, 2021 10:16:14 AM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTraceNotification
+[0m2021.04.07 18:28:02 INFO  Started: Metals version 0.10.1 in workspace '/Users/david/projects/mandm/Orders' for client vscode 1.55.0.[0m
+[0m2021.04.07 18:28:09 INFO  time: initialize in 6.58s[0m
+[0m2021.04.07 18:28:13 WARN  Build server is not auto-connectable.[0m
+[0m2021.04.07 18:28:13 WARN  no build tool detected in workspace '/Users/david/projects/mandm/Orders'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.04.28 16:02:43 INFO  shutting down Metals[0m

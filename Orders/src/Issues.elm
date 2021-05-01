@@ -1,27 +1,41 @@
 module Issues exposing (main, Order, orderDecoder, ordersDecoder)
 
+{-
+problems:
+https://www.reddit.com/r/elm/comments/b4ao63/trouble_with_extracting_parsing_url_fragment/
+-}
+
+{- currently we take an queryorder hardcoded from the HTML page. Need to change 
+so the orderID is grabbed from the URL-}
+
 import Html exposing (Html)
 import Browser
 import Element exposing (Element, rgb255, spacing, padding,el, row,  fill)
 import Element.Font as Font
-import Http exposing (expectJson)
+import Http exposing (..)
 import Json.Decode as Decode exposing (Decoder, int, float, list, string)
 import Json.Decode.Pipeline exposing (required)
 import RemoteData exposing ( WebData)
-import Url exposing (Url)
+import Url exposing (..)
 import Url.Parser as P exposing (Parser, (</>), (<?>), s, top)
 import Url.Parser.Query as Q
+-- import Dict exposing (Dict)
+-- import QS
+
 
 -- route URLs to handlers
 type Route
     = Home
-    | GetOrder Int
+    --| GetOrder Int
+    | OrderQuery (Maybe Int)
 
 type Msg
     = FetchOrders
     | OrdersReceived (WebData (List Order))
 
-type alias Model = { orders : WebData (List Order), pageurl : String, order : Int}
+type alias Model = { orders : WebData (List Order), pageurl : String, queryorder : QueryOrder}
+
+type QueryOrder  = OrderList (List Int)  | NoOrders
 
 type alias Item =
     { sku : String
@@ -59,7 +73,7 @@ tableitemtext : (a  -> String ) -> a -> Element msg
 tableitemtext formatterf msg =
     Element.el itemfmt (Element.text (formatterf msg))
 
-{- Decoder for a list of type Order -}
+{- Json Decoder for a list of type Order -}
 ordersDecoder : Decoder (List Order)
 ordersDecoder =
     let y = orderDecoder
@@ -75,6 +89,41 @@ orderDecoder =
     |> required "items" (list itemDecoder)
     |> required "shipping" float
     |> required "total" float
+
+{- extract list of queryorder numbers we're interested in from the inbound referring Url -}
+urlorderlist : Model -> QueryOrder
+urlorderlist model = 
+    case Url.fromString model.pageurl of
+            Nothing ->
+                NoOrders
+            Just url ->
+                Maybe.withDefault NoOrders (Just (extractorders url.query))
+   -- case modelurl of
+   --    Just u -> P.parse (s "src" </> s "Main.elm" <?> (Q.custom "post" (List.filterMap String.toInt))) u 
+   --    Nothing -> Just [] 
+
+-- parse url query string & if not empty get orders
+extractorders : Maybe String -> QueryOrder --List Int 
+extractorders query =
+    case query of 
+        Nothing -> NoOrders
+        Just querystring ->
+          parsequery querystring --    NoOrders --TODO write this bit...
+
+parsequery : String -> QueryOrder
+parsequery string =
+    NoOrders
+routeParser : Parser (Route -> a) a
+routeParser =
+    P.oneOf
+        [ P.map Home top
+        --, P.map GetOrder (s "" </> P.int)
+        , P.map OrderQuery (s "" <?> Q.int "q") -- Just (OrderQuery (Just "12028383"))
+        ]
+
+queryParser : Q.Parser (List Int)
+queryParser =
+  Q.custom "queryorder" (List.filterMap String.toInt)
 
 extract : Int -> (List Order) -> List Order
 extract wanted orders = 
@@ -94,13 +143,17 @@ view : Model -> Html Msg
 view model =
     Element.layout[Font.size 12]
     <| Element.column[]
-    [                       
-        row[]([viewOutput model  model.order])        
+    [   
+        case model.queryorder of
+            OrderList list ->
+                row[] (List.map (\x -> row[] ([viewOutput model x])) list)
+            NoOrders ->
+                row[][]
         -- row[]([viewOutput model])
     ]
 
 viewOutput : Model -> Int -> Element Msg
-viewOutput model order =
+viewOutput model queryorder =
     case model.orders of
         RemoteData.NotAsked ->
             Element.text ""
@@ -109,7 +162,7 @@ viewOutput model order =
             Element.text "Loading..."
 
         RemoteData.Success orders ->
-            viewOrders (extract order orders)
+            viewOrders (extract queryorder orders)
 
         RemoteData.Failure httpError ->
             viewError (errorMessage httpError)
@@ -133,26 +186,26 @@ viewOrders orders =
                 header = colheadertext "Customer ID"
                 , width = fill
                 , view =  
-                    \order -> 
-                        el itemfmt <| Element.text (String.fromInt order.customerid)
+                    \queryorder -> 
+                        el itemfmt <| Element.text (String.fromInt queryorder.customerid)
                 }
                 , { header = colheadertext "Order ID"
                     , width = fill
                     , view =  
-                        \order -> 
-                            el itemfmt <| Element.text (String.fromInt order.orderid )
+                        \queryorder -> 
+                            el itemfmt <| Element.text (String.fromInt queryorder.orderid )
                 }                
                 , { header = colheadertext "Shipping"
                     , width = fill
                     , view =  
-                        \order -> 
-                            el itemfmt <| Element.text (String.fromFloat order.shipping )
+                        \queryorder -> 
+                            el itemfmt <| Element.text (String.fromFloat queryorder.shipping )
                 }
                 , { header = colheadertext "Total"
                     , width = fill
                     , view =  
-                        \order -> 
-                            el itemfmt <| Element.text (String.fromFloat order.total )
+                        \queryorder -> 
+                            el itemfmt <| Element.text (String.fromFloat queryorder.total )
                 }
             ]    
         }
@@ -241,7 +294,16 @@ update msg model =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( { orders = RemoteData.Loading, pageurl = flags.flagurl, order = flags.flagorder }, fetchOrders )
+    ( 
+        {--}
+        { orders = RemoteData.Loading,
+        pageurl =  flags.flagurl, 
+        queryorder =  NoOrders --TODO needs to be stuffz urlorderlist flags.flagurl
+        }
+        
+        --Model RemoteData.Loading "" NoOrders
+    , 
+    fetchOrders )
 
 main : Program Flags Model Msg
 main =
